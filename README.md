@@ -47,6 +47,8 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
       1. [Shorthand for Ambient Modules](#shorthandambientmodules)
       2. [Wildcard Module Declarations](#wildcardmoduledeclarations)
       3. [UMD modules](#umdmodules)
+8. [Namespaces](#namespaces)
+9. [Ambient Modules](#ambientmodules)
 
 ---
 
@@ -779,9 +781,7 @@ TypeScript v^3.0
 ***package.json***
 ```json
   "dependencies": {
-    // ...
     "requirejs": "^2.3.6",
-    // ...
   }
 ```
 
@@ -812,13 +812,13 @@ With jQuery declared in a `.d.ts` file, it will now be available inside the glob
 
 However, one disadvantage of this alternative is that the IDE will not have access to the jQuery `$` variable object, making it a little difficult to write code. This disadvantage is fortunately overcome using the second alternative.
 
-#### *1.* Using @types/jquery NPM package:
+#### *2.* Using @types/jquery NPM package:
 
 The problem with the first alternative, is that by declaring jQuery's `$` as type `any` (`declare var $: any;`), we are basically telling the compiler to *assume* that it will have access to jQuery in runtime. But that's not practical. 
 
-To avoid this we can use `@types` packages. These packages basically contain type definitions for their respective JS libraries counterparts. For example, using [@types/jquery](https://www.npmjs.com/package/@types/jquery) or [https://www.npmjs.com/package/@types/react](https://www.npmjs.com/package/@types/react) will enable the programmer to use their respective types all over the application without having to declare them. This is because both of these libraries have `.d.ts` files includes and the compiler will pick them up inside the `node_modules` library.
+To avoid this we can use `@types` packages. These packages basically contain type definitions for their respective JS libraries counterparts. For example, using [@types/jquery](https://www.npmjs.com/package/@types/jquery) or [`@types/react`](https://www.npmjs.com/package/@types/react) will enable the programmer to use their respective types all over the application without having to declare them. This is because both of these libraries have `.d.ts` files includes and the compiler will pick them up inside the `node_modules` library.
 
-Here's an example using [@types/jquery](https://www.npmjs.com/package/@types/jquery) and `requirejs`:
+Here's an example using [`@types/jquery`](https://www.npmjs.com/package/@types/jquery) and `requirejs`:
 
 **Organization scheme:**
 
@@ -832,14 +832,10 @@ TypeScript v^3.0
 ***package.json***
 ```json
   "devDependencies": {
-    // ...
     "@types/jquery": "^3.3.29",
-    // ...
   },
   "dependencies": {
-    // ...
     "requirejs": "^2.3.6",
-    // ...
   }
 ```
 
