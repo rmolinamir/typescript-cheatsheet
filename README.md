@@ -1,6 +1,6 @@
 ![TypeScript Logo][logo]
 
-[logo]: https://github.com/rmolinamir/TypeScript.png "TypeScript"
+[logo]: https://github.com/rmolinamir/typescript-cheatsheet/blob/master/TypeScript.png "TypeScript"
 
 # TypeScript Cheatsheet
 
