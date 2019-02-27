@@ -1,9 +1,9 @@
 
-[logo]: https://github.com/rmolinamir/typescript-cheatsheet/blob/master/TypeScript.png "TypeScript"
-
 # TypeScript Cheatsheet
 
-![TypeScript Logo][logo]
+<p align="center">
+  <img src="https://github.com/rmolinamir/typescript-cheatsheet/blob/master/TypeScript.png" alt="TypeScript"/>
+</p>
 
 A set of TypeScript related notes used for quick reference. The cheatsheet contains references to types, classes, decorators, and many other TypeScript related subjects.
 
