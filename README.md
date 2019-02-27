@@ -37,8 +37,16 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
       2. [Static Properties & Methods](#staticpropertiesmethods)
       3. [Abstract Classes](#abstractclasses)
       4. [Private Constructors & Singletons **(MVP)**](#privateconstructorsingletons)
-5. [Namespaces](#namespaces)
-6. [Modules](#modules)
+5. [Modules](#modules)
+      1. [Export](#export)
+      2. [Default Exports](#defaultexports)
+      3. [Import](#import)
+      4. [Advanced Module Loading](#advancedmoduleloading)
+6. [Namespaces](#namespaces)
+7. [Ambient Modules](#ambientmodules)
+      1. [Shorthand for Ambient Modules](#shorthandambientmodules)
+      2. [Wildcard Module Declarations](#wildcardmoduledeclarations)
+      3. [UMD modules](#umdmodules)
 
 ---
 
@@ -489,6 +497,160 @@ In the above example, the variables `rightWay` and `anotherWay` would be pointer
 
 ---
 
+## Modules <a name="modules"></a>
+
+> Modules are executed within their own scope, not in the global scope; this means that variables, functions, classes, etc. declared in a module are not visible outside the module unless they are explicitly exported using one of the export forms. Conversely, to consume a variable, function, class, interface, etc. exported from a different module, it has to be imported using one of the import forms.
+
+The module code generation may be specified in the `tsconfig.json` file. **The compiler will generate appropriate code for Node.js (CommonJS), requirejs (AMD), UMD, SystemJS, or ECMAScript 2015 native modules (ES6) module-loading systems** depending on what the `tsconfig.json` `module` option is set on. For example, the React.js `tsconfig.json` file generated when using `create-react-app` module code generation option is `esnext`, targeted to `es5`. 
+
+> In TypeScript, any file containing a top-level import or export is considered a module. Conversely, a file without any top-level import or export declarations is treated as a script whose contents are available in the global scope (and therefore to modules as well).
+
+1. [Export](#export)
+2. [Default Exports](#defaultexports)
+3. [Import](#import)
+4. [Advanced Module Loading](#advancedmoduleloading)
+
+### Export <a name="export"></a>
+> Any declaration (such as a `variable`, `function`, `class`, type alias, `enum` or `interface`) can be exported by adding the export keyword.
+
+Exporting a `variable` and a `function`:
+```ts
+  export const PI = 3.14;
+
+  export const calculateCircumference = (diameter: number) => {
+    return diameter * PI;
+  }
+```
+
+Exporting an `interface` for a react.js `class` component's state:
+```tsx
+  export interface IAppState {
+    counterValue: number;
+  }
+  class App extends React.Component<{} /* IAppProps */, IAppState> {
+    public state = { counterValue: 0 }; // State is required to be public.
+    // ...
+  }
+```
+
+Exporting an `interface` for a react.js `functional` component `onClick` handlers:
+```tsx
+  export enum CounterHandlers {
+    Inc,
+    Dec
+  }
+  interface ICounterOutputProps {
+    counter: number;
+    onClick: (mode: CounterHandlers) => void;
+  }
+  const counterOutput = (props: ICounterOutputProps) => {
+    return (
+      /// ...
+        <button onClick={() => props.onClick(CounterHandlers.Dec)}>Decrement</button>
+        <button onClick={() => props.onClick(CounterHandlers.Inc)}>Increment</button>
+      /// ...
+    );
+  }
+```
+
+### Default Exports <a name="defaultexports"></a>
+> Each module can optionally export a default export. Default exports are marked with the keyword default; and there can only be one default export per module. default exports are imported using a different import form.
+
+The `default` exports are really handy. For instance, a library like React.js might have a default export of `React`, commonly imported under the name `React`. Each file may only have **one** default export, for example:
+
+```ts
+  const calculateRectangle = (width: number, length: number) => {
+    return width * length;
+  }
+
+  export default calculateRectangle
+```
+
+### Import <a name="import"></a>
+> Importing is just about as easy as exporting from a module. 
+
+Importing an exported declaration is done through using the `import` keyword. For example, considering the `PI`, `calculateCircumference`, and `calculateRectangle` export examples shown above, this is how we would import them into our `app.ts` file with the following folder structure:
+
+**Organization scheme:**
+
+```js
+TypeScript v^3.0
+├── app.ts
+├── src
+│   ├── circle.ts
+│   ├── rectangle.ts
+```
+
+```ts
+  import { PI, calculateCircumference } from './src/circle'
+  import calculateRectangle from './src/rectangle'
+  console.log(PI); // Prints: 3.14
+  console.log(calculateCircumference(10)); // Prints: 31.42
+  console.log(calculateRectangle(5, 10)); // Prints: 50
+```
+
+### Advanced Module Loading <a name="advancedmoduleloading"></a>
+> In some cases, you may want to only load a module under some conditions. In TypeScript, we can use the pattern shown below to implement this and other advanced loading scenarios to directly invoke the module loaders without losing type safety.
+
+Sometimes we might be in a situation where we only want to load certain parts of our application dynamically. This may be to reduce the initial load time or to improve performance.
+
+This is commonly known as dynamic imports. The idea is to use the following pattern: `import id = require('...')` which will give us access to the types exxposed by the module thanks to the compiler. The module will be loaded dynamically, which means it can be preceded by something like an `if` statement. 
+
+> **This leverages the reference-elision optimization so that the module is only loaded when needed**. For this pattern to work, it’s important that the symbol defined via an import is only used in type positions (i.e. never in a position that would be emitted into the JavaScript).
+
+> **To maintain type safety, we can use the typeof keyword. The typeof keyword, when used in a type position, produces the type of a value, in this case the type of the module**.
+
+We may use the `declare` keyword to literally declare a function. For exmaple, to declare a require function we would use the following code:
+
+```ts
+  declare function require(moduleName: string): any;
+```
+
+While keeping that in mind, here are some examples as shown in the [TypeScript official documentation about modules](https://www.typescriptlang.org/docs/handbook/modules.html):
+
+***Dynamic Module Loading in Node.js:***
+```ts
+  declare function require(moduleName: string): any;
+  
+  import { ZipCodeValidator as Zip } from "./ZipCodeValidator";
+
+  if (needZipValidation) {
+    let ZipCodeValidator: typeof Zip = require("./ZipCodeValidator");
+    let validator = new ZipCodeValidator();
+    if (validator.isAcceptable("...")) { /* ... */ }
+  }
+```
+
+***Sample: Dynamic Module Loading in requirejs, pay attention to the `onLoad` argument:***
+```ts
+  declare function require(moduleNames: string[], onLoad: (...args: any[]) => void): void;
+  import * as Zip from "./ZipCodeValidator";
+  if (needZipValidation) {
+    require(["./ZipCodeValidator"], (ZipCodeValidator: typeof Zip) => {
+      let validator = new ZipCodeValidator.ZipCodeValidator();
+      if (validator.isAcceptable("...")) { /* ... */ }
+    });
+  }
+```
+
+***Sample: Dynamic Module Loading in System.js. Using the imported `System` object from the library:***
+```ts
+  declare const System: any;
+  import { ZipCodeValidator as Zip } from "./ZipCodeValidator";
+  if (needZipValidation) {
+      System.import("./ZipCodeValidator").then((ZipCodeValidator: typeof Zip) => {
+          var x = new ZipCodeValidator();
+          if (x.isAcceptable("...")) { /* ... */ }
+      });
+  }
+```
+
+To descripe the types of libraries not written within TypeScript, basically third party libraries like `jQuery`, we need to declare the API that the library exposes (e.g. We would declare the `$` symbol for `jQuery`, to be able to access its functionalities).
+
+> We call declarations that don’t define an implementation “ambient”. ***Typically, these are defined in `.d.ts` files. If you’re familiar with C/C++, you can think of these as `.h` files***. More on this below.
+
+---
+
 ## Namespaces <a name="namespaces"></a>
 
 In TypeScript, a `namespace` is an **internal** module, while a `module` is an **external** module. Like modules, using namespaces is a way to organize the code inside an application.
@@ -567,4 +729,168 @@ Running the following code in `app.ts` will result in:
 
 ---
 
-## Modules <a name="modules"></a>
+## Ambient Modules <a name="ambientmodules"></a>
+
+> In Node.js, most tasks are accomplished by loading one or more modules. We could define each module in its own .d.ts file with top-level export declarations, but it’s more convenient to write them as one larger .d.ts file. To do so, we use a construct similar to ambient namespaces, but we use the module keyword and the quoted name of the module which will be available to a later import.
+
+Here is an example as shown in the [TypeScript official documentation about modules](https://www.typescriptlang.org/docs/handbook/modules.html):
+
+***node.d.ts (simplified excerpt)***
+```ts
+  declare module "url" {
+    export interface Url {
+      protocol?: string;
+      hostname?: string;
+      pathname?: string;
+    }
+    export function parse(urlStr: string, parseQueryString?, slashesDenoteHost?): Url;
+  }
+  declare module "path" {
+    export function normalize(p: string): string;
+    export function join(...paths: any[]): string;
+    export var sep: string;
+  }
+```
+
+Afterwards we are able to `/// <reference>` the node.d.ts as shown in the `namespace` section, and then load the modules using `import url = require("url");` or `import * as URL from "url"` using ES6.
+
+```ts
+  /// <reference path="node.d.ts"/>
+  import * as URL from "url";
+  let myUrl = URL.parse("http://www.typescriptlang.org");
+```
+
+Sounds a bit complicated but it's actually really easy to import a third library. Here the simplest two alternatives: 
+
+#### *1.* Using a `d.ts` file that will put the jQuery `$` variable in the global scope of the application:
+
+Here is how we could import jQuery into a simple application using `requirejs`, consider the following organization scheme:
+
+**Organization scheme:**
+
+```js
+TypeScript v^3.0
+├── package.json
+├── jquery.d.ts
+├── app.ts
+├── index.html
+```
+
+***package.json***
+```json
+  "dependencies": {
+    // ...
+    "requirejs": "^2.3.6",
+    // ...
+  }
+```
+
+***jquery.d.ts***
+```ts
+  declare var $: any;
+```
+With jQuery declared in a `.d.ts` file, it will now be available inside the global scope thanks to the compiler.
+
+***app.ts:***
+```ts
+  $('button').click(function() {
+    alert('Button was clicked!');
+  });
+```
+
+***index.html using requirejs to import the modules:***
+```html
+  <!-- ...  -->
+  <button>Click me to trigger an alert with jQuery</button>
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script data-main="app.js" src="node_modules/requirejs/requirejs"></script>
+  <!-- ...  -->
+```
+
+However, one disadvantage of this alternative is that the IDE will not have access to the jQuery `$` variable object, making it a little difficult to write code. This disadvantage is fortunately overcome using the second alternative.
+
+#### *1.* Using @types/jquery NPM package:
+
+The problem with the first alternative, is that by declaring jQuery's `$` as type `any` (`declare var $: any;`), we are basically telling the compiler to *assume* that it will have access to jQuery in runtime. But that's not practical. 
+
+To avoid this we can use `@types` packages. These packages basically contain type definitions for their respective JS libraries counterparts. For example, using [@types/jquery](https://www.npmjs.com/package/@types/jquery) or [https://www.npmjs.com/package/@types/react](https://www.npmjs.com/package/@types/react) will enable the programmer to use their respective types all over the application without having to declare them. This is because both of these libraries have `.d.ts` files includes and the compiler will pick them up inside the `node_modules` library.
+
+Here's an example using [@types/jquery](https://www.npmjs.com/package/@types/jquery) and `requirejs`:
+
+**Organization scheme:**
+
+```js
+TypeScript v^3.0
+├── package.json
+├── app.ts
+├── index.html
+```
+
+***package.json***
+```json
+  "devDependencies": {
+    // ...
+    "@types/jquery": "^3.3.29",
+    // ...
+  },
+  "dependencies": {
+    // ...
+    "requirejs": "^2.3.6",
+    // ...
+  }
+```
+
+***app.ts:***
+```ts
+  $('button').click(function() {
+    alert('Button was clicked!');
+  });
+```
+
+***index.html using requirejs to import the modules:***
+```html
+  <!-- ...  -->
+  <button>Click me to trigger an alert with jQuery</button>
+  <script
+    src="https://code.jquery.com/jquery-3.3.1.min.js"
+    integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8="
+    crossorigin="anonymous"></script>
+  <script data-main="app.js" src="node_modules/requirejs/requirejs"></script>
+  <!-- ...  -->
+```
+
+Notice the difference? We don't need to have the declare `.d.ts` file anymore, because the compiler will pick up on the `.d.ts` files inside the `@types/jquery` library.
+
+### Shorthand ambient modules <a name="shorthandambientmodules"></a>
+> If you don’t want to take the time to write out declarations before using a new module, you can use a shorthand declaration to get started quickly.
+
+*declarations.d.ts*
+```ts
+  declare module "hot-new-module";
+```
+
+### Wildcard module declarations <a name="wildcardmoduledeclarations"></a>
+> Some module loaders such as SystemJS and AMD allow non-JavaScript content to be imported. These typically use a prefix or suffix to indicate the special loading semantics. Wildcard module declarations can be used to cover these cases.
+
+```ts
+  declare module "*!text" {
+      const content: string;
+      export default content;
+  }
+  // Some do it the other way around.
+  declare module "json!*" {
+      const value: any;
+      export default value;
+  }
+```
+### UMD modules <a name="umdmodules"></a>
+> Some libraries are designed to be used in many module loaders, or with no module loading (global variables). These are known as UMD modules. These libraries can be accessed through either an import or a global variable. For example:
+
+*math-lib.d.ts*
+```ts
+  export function isPrime(x: number): boolean;
+  export as namespace mathLib;
+```
