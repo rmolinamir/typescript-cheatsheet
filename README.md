@@ -562,7 +562,7 @@ Running the following code in `app.ts` will result in:
 
   console.log(Circle.PI); // Prints: 3.14
   console.log(Circle.calculateCircumference(10)); // Prints 31.42
-  console.log(calculateRectangle(25, 25)); // Prints: 50
+  console.log(calculateRectangle(25, 25)); // Prints: 625
 ```
 
 ---
