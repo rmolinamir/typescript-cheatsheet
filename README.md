@@ -79,7 +79,7 @@ As TypeScript code can be compiled to ES5, it includes all of the native JavaScr
 
 If no types are declared, TypeScript will automatically assign a type depending on the types of the Array values.
 ```ts
-  const numbers = [1, 3.22, 6, -1] // This variable will be automatically be assigned a number[] array type.
+  const numbers = [1, 3.22, 6, -1] // This variable will automatically be assigned a number[] array type.
 ```
 
 ### Tuples <a name="tuples"></a>
