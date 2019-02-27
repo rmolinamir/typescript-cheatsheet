@@ -1,7 +1,15 @@
-/**
- * Damn it. I LOVE TYPESCRIPT!!!!!!
- */
+// Simple interface
+interface SimplePerson {
+  firstName: string;
+}
 
+const simplePerson: SimplePerson = { firstName: 'Robert' };
+
+const simpleGreet = (simplePerson: SimplePerson) => console.log(`Hello ${simplePerson}!`);
+
+simpleGreet(simplePerson); // Prints: Hello Robert!
+
+// Advanced Interface
 interface NamedPerson {
   firstName: string;
   age?: number;
@@ -9,6 +17,7 @@ interface NamedPerson {
   greet(lastName: string): void;
 }
 
+// greet function.
 const greet = (person: NamedPerson) => {
   console.log(`Hello ${person.firstName}!`);
   person.greet(person.lastName);

@@ -12,6 +12,7 @@ function betterEcho<T>(data: T) {
 }
 // Now I get types in the IDE, the compiler also knows what type is returned from betterEcho.
 console.log(betterEcho('Robert').length);
+// console.log(betterEcho(24).length); // Property 'length' does not exist on type `number`.
 console.log(betterEcho<number>(24).toExponential(2));
 console.log(betterEcho({ name: 'Robert', age: 24 }).age);
 
@@ -29,8 +30,11 @@ printAll<number>([1, 3, 5]);
 // printAll<number>([1, 'string', 5]); // Not possible.
 
 // Generic Types
-const echo2: <T>(data: T) => T = betterEcho;
-console.log(echo2<string>('Hello world!'));
+const echoStr: <T>(data: T) => T = betterEcho;
+console.log(echoStr<string>('Hello world!').toLocaleUpperCase()); // Prints: "HELLO WORLD!"
+
+const echoNum: <T>(data: T) => T = betterEcho;
+console.log(echoNum<number>(312).toString()); // Prints: "312"
 
 // Generic Class
 class SimpleMath {
@@ -48,22 +52,25 @@ class GenericMath<T extends number | string> {
     return +this.baseValue * +this.multiplyValue
   }
 }
+
 // const genericMath = new GenericMath<number>(10, 'string'); // Not possible.
+// const genericMathBoolean = new GenericMath<boolean>(10, '20'); // Not possible.
 const genericMath = new GenericMath<number>(10, 20);
 const genericMathString = new GenericMath<string>('10', '20');
 const genericMathBoth = new GenericMath<number | string>(10, '20');
-// const genericMathBoolean = new GenericMath<boolean>(10, '20'); // Not possible.
+
 console.log(genericMath.calculate());
 console.log(genericMathString.calculate());
 console.log(genericMathBoth.calculate());
 
-class MultipleTypesMath<T extends number | string, U extends number | string> {
+// Multiple Types
+class MultipleTypesMath<T extends number, U extends number | string> {
   constructor(public baseValue: T, public multiplyValue: U) {}
   calculate(): number {
     return +this.baseValue * +this.multiplyValue
   }
 }
-const multipleTypesMath = new GenericMath<number | string>(10, '20');
+const multipleTypesMath = new MultipleTypesMath<number, number | string>(5, '20');
 console.log(multipleTypesMath.calculate());
 
 // Exercise

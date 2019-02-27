@@ -1,3 +1,7 @@
+![TypeScript Logo][logo]
+
+[logo]: https://github.com/rmolinamir/TypeScript.png "TypeScript"
+
 # TypeScript Cheatsheet
 
 A set of TypeScript related notes used for quick reference. The cheatsheet contains references to types, classes, decorators, and many other TypeScript related subjects.
@@ -44,15 +48,30 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
       4. [Advanced Module Loading](#advancedmoduleloading)
 6. [Namespaces](#namespaces)
 7. [Ambient Modules](#ambientmodules)
-      1. [Shorthand for Ambient Modules](#shorthandambientmodules)
-      2. [Wildcard Module Declarations](#wildcardmoduledeclarations)
-      3. [UMD modules](#umdmodules)
-8. [Namespaces](#namespaces)
-9. [Ambient Modules](#ambientmodules)
+      1. [Using a `d.ts` file that will put the jQuery `$` variable in the global scope of the application](#jquery.d.ts)
+      2. [Using @types/jquery NPM package: @types/jquery](#@types/jquery)
+      3. [Shorthand for Ambient Modules](#shorthandambientmodules)
+      4. [Wildcard Module Declarations](#wildcardmoduledeclarations)
+      5. [UMD modules](#umdmodules)
+8. [Interfaces](#interfaces)
+      1. [Implements Keyword](#implementskeyword)
+          - [Implementing an `interface` to a `Class`](#implementinginterfacetoclass)
+          - [Implementing an `interface` to a `function`](#implementinginterfacetofunction)
+      2. [Extends Keyword (Interface Inheritance)](#extendskeyword)
+9. [Generics](#generators)
+      1. [Simple Generic](#simplegenerics)
+      2. [Better Generic](#bettergenerics)
+      3. [Built-in Generics](#builtingenerics)
+      4. [Generic Types](#generictypes)
+      5. [Generic Class](#genericclass)
+10. [Decorators](#decorators)
+11. [Workflows](#workflows)
+12. [TypeScript with React.js](#typescriptreactjs)
 
 ---
 
 ## Introduction <a name="introduction"></a>
+
 TypeScript is a very powerful addition to JavaScript. TypeScript is developed by Microsoft and is increasingly supported by the day  by technologies such as Angular, Vue.js 3, React.js, and many others.
 
 As TypeScript code can be compiled to ES5, it includes all of the native JavaScript features such as spread arrow function, deconstructors, and introduces some **very** useful features such as decorators, generics and interfaces, enums, modules, among others which can be found in different programming languages. 
@@ -60,56 +79,76 @@ As TypeScript code can be compiled to ES5, it includes all of the native JavaScr
 ---
 
 ## Types <a name="types"></a>
+
 > For programs to be useful, we need to be able to work with some of the simplest units of data: numbers, strings, structures, boolean values, and the like. In TypeScript, we support much the same types as you would expect in JavaScript, with a convenient enumeration type thrown in to help things along.
 
 ### Basic Assign Types <a name="basicassigntypes"></a>
-> Another fundamental part of creating programs in JavaScript for webpages and servers alike is working with textual data. As in other languages, we use the type `string` to refer to these textual datatypes. Just like JavaScript, TypeScript also uses double quotes (`"`) or single quotes (`'`) to surround string data.
+
 #### String <a name="string"></a>
+
+> Another fundamental part of creating programs in JavaScript for webpages and servers alike is working with textual data. As in other languages, we use the type string to refer to these textual datatypes. Just like JavaScript, TypeScript also uses double quotes (") or single quotes (') to surround string data.
+
 ```ts
   const myName: string = 'Robert';
 ```
 
 #### Number <a name="number"></a>
+
 > As in JavaScript, all numbers in TypeScript are floating point values. These floating point numbers get the type `number`. In addition to hexadecimal and decimal literals, TypeScript also supports binary and octal literals introduced in ECMAScript 2015.
+
 ```ts
   const myAge: number = 24;
 ```
 
 #### Boolean <a name="boolean"></a>
+
 > The most basic datatype is the simple `true`/`false` value, which JavaScript and TypeScript call a `boolean` value.
+
 ```ts
   const bHasHobbies: boolean = true;
 ```
 
 #### Array <a name="array"></a>
+
 > TypeScript, like JavaScript, allows you to work with arrays of values. Array types can be written in one of two ways. In the first, you use the type of the elements followed by [] to denote an array of that element type:
+
 ```ts
   const hobbies: string['Programming', 'Cooking'] = true;
 ```
 
 If no types are declared, TypeScript will automatically assign a type depending on the types of the Array values.
+
 ```ts
   const numbers = [1, 3.22, 6, -1] // This variable will automatically be assigned a number[] array type.
 ```
 
 ### Tuples <a name="tuples"></a>
+
 > Tuple types allow you to express an array where the type of a fixed number of elements is known, but need not be the same. For example, you may want to represent a value as a pair of a `string` and a `number`:
+
 ```ts
   const address: [string, number] = ["Street", 99];
 ```
 
 ### Any <a name="any"></a>
+
 > We may need to describe the type of variables that we do not know when we are writing an application. These values may come from dynamic content, e.g. from the user or a 3rd party library. In these cases, we want to opt-out of type-checking and let the values pass through compile-time checks. To do so, we label these with the `any` type:
+
 ```ts
   let myCar: any = 'BMW';
+
   console.log(myCar); // Prints: BMW
+
   myCar = { brand: 'BMW', series: 3 };
+
   console.log(myCar) // Prints: { brand: "BMW", series: 3 }
 ```
 
 ### Enums <a name="enums"></a>
+
 > A helpful addition to the standard set of datatypes from JavaScript is the enum. As in languages like C#, an enum is a way of giving more friendly names to sets of numeric values.
 By default, any `enum` will begin numbering their members starting at 0. You can change this by manually setting the value of one of its members. For example, we can modify the Green value to 100, the next will be 101, then set Yellow back to 2.
+
 ```ts
   enum Color {
     Gray, // 0
@@ -124,7 +163,9 @@ By default, any `enum` will begin numbering their members starting at 0. You can
 ```
 
 ### Functions <a name="functions"></a>
+
 Functions as you may expect work exactly the same as in JavaScript with a couple new features. In TypeScript, you may assign the function two things:
+
 - Argument types.
 - Function types.
 
@@ -132,32 +173,41 @@ Functions as you may expect work exactly the same as in JavaScript with a couple
   function returnMyName(myName): string {
     return myName;
   }
+
   console.log(returnMyName('Robert')) // Prints: Robert
 ```
 
 ### Argument Types <a name="argumenttypes"></a>
+
 In TypeScript any argument of a function may be assigned a type no matter how complex, for example:
+
 ```ts
   // argument types
   function multiply(value1: number, value2: number) {
     return value1 * value2;
   }
+
   // console.log(multiply('Robert', 5)) // Not possible, both arguments must be of type number.
   console.log(multiply(10,5)) // Prints: 50
 ```
 
 ### Function Types <a name="functiontypes"></a>
+
 Just like the argument, the **return value** of a function may be assigned a type. Consider the example above to be included into the example below:
+
 ```ts
   const myMultiply: (val1: number, val2: number) => number;
   // myMultiply = sayHello; // Not possible.
   // myMultiply(); // Not possible.
   myMultiply = multiply;
+
   console.log(myMultiply(5, 2));
 ```
 
 ### Void Function Type <a name="void"></a>
+
 > The type `void` is a little like the opposite of `any`: the absence of having any type at all. You may commonly see this as the return type of functions that do not return a value:
+
 ```ts
   function sayHello(): void {
     console.log('Hello!');
@@ -165,14 +215,17 @@ Just like the argument, the **return value** of a function may be assigned a typ
   }
 ```
 > Declaring variables of type `void` is not useful because you can only assign `undefined` or `null` to them:
+
 ```ts
   let unusable: void = undefined;
 ```
 
 ### Objects <a name="objects"></a>
+
 > The type `object` represents the non-primitive type, i.e. any thing that is not `number`, `string`, `boolean`, `symbol`, `null`, or `undefined`.
 
 In JavaScript, so as in TypeScript, Objects are comprised of key-value pairs. We can assign types to the `object` key-value pairs, like so:
+
 ```ts
   let userData: { name: string, age: number } = {
     name: 'Max',
@@ -193,7 +246,9 @@ In JavaScript, so as in TypeScript, Objects are comprised of key-value pairs. We
 ```
 
 #### Complex Objects <a name="complexobjects"></a>
+
 As you may expect, the assigned types to the `object` key-value pairs can reach high levels of complexity, for example: 
+
 ```ts
   let complex: { data: number[], output: (all: boolean) => number[] } = {
     data: [100, 3,99, 10],
@@ -205,9 +260,12 @@ As you may expect, the assigned types to the `object` key-value pairs can reach 
 ```
 
 ### Alias <a name="alias"></a>
+
 Writing complex and long types can quickly become dull and impractical. For a DRY approach, it's possible to create aliases for types, essentially creating your own types. Here's an example using the complex object above:
+
 ```ts
   type Complex = { data: number[], output: (all: boolean) => number[] };
+
   let complex2: Complex  = {
     data: [100, 3,99, 10],
     output: function(all: boolean): number[] {
@@ -217,7 +275,9 @@ Writing complex and long types can quickly become dull and impractical. For a DR
 ```
 
 ### Union <a name="union"></a>
+
 Variables are not restricted to only one assigned type. This is where union types come in where we can assign two or more types (e.g. assign `number` and `string`) to a single variable. For example:
+
 ```ts
   let myRealRealAge: number | string = 24;
   myRealRealAge = '24';
@@ -225,7 +285,9 @@ Variables are not restricted to only one assigned type. This is where union type
 ```
 
 ### Check <a name="check"></a>
+
 Programmatically checking for types work eactly as it works in JavaScript:
+
 ```ts
   let finalValue = 'A string';
   if (typeof finalValue == 'string') {
@@ -234,7 +296,9 @@ Programmatically checking for types work eactly as it works in JavaScript:
 ```
 
 ### Never <a name="never"></a>
+
 > The `never` type represents the type of values that never occur. For instance, `never` is the return type for a function expression or an arrow function expression **that always throws an exception or one that never returns**; Variables also acquire the type `never` when narrowed by any type guards that can never be true.
+
 ```ts
   function neverReturns(): never {
     throw new Error('An error!');
@@ -242,9 +306,12 @@ Programmatically checking for types work eactly as it works in JavaScript:
 ```
 
 ### Nullable <a name="nullable"></a>
+
 > In TypeScript, both `undefined` and `null` actually have their own types named `undefined` and `null` respectively. Much like `void`, they’re not extremely useful on their own:
+
 ```ts
   let canBeNull: null | number = 12;
+
   canBeNull = null;
   let canAlsoBeNull;
   canAlsoBeNull = null;
@@ -253,6 +320,7 @@ Programmatically checking for types work eactly as it works in JavaScript:
 ```
 
 ### Type Assertions <a name="typeassertions"></a>
+
 >Sometimes you’ll end up in a situation where you’ll know more about a value than TypeScript does. Usually this will happen when you know the type of some entity could be more specific than its current type.
 
 > Type assertions are a way to tell the compiler “trust me, I know what I’m doing”. A type assertion is like a type cast in other languages, but performs no special checking or restructuring of data. It has no runtime impact, and is used purely by the compiler. TypeScript assumes that you, the programmer, have performed any special checks that you need.
@@ -272,52 +340,71 @@ And the other is the `as`-syntax:
 ---
 
 ## ES6 <a name="es6"></a>
+
 TypeScript natively supports the newer ES6 (A.K.A. ECMAScript 6 and ECMAScript 2015) JavaScript features. As you may have guessed, we can assign types to these new features (e.g. assigning types to an arrow function). Here are some examples:
 
 ### Template Liberals <a name="templateliberals"></a>
+
 ```ts
   const userName = 'Robert';
   const greeting = `Hello I'm ${userName}`;
+
   console.log(greeting)
 ```
 
 ### Arrow Functions <a name="arrowfunctions"></a>
+
 Arrow function arguments can be assigned any type.
+
 ```ts
   const greet = (name: string = 'Robert') => console.log(`Hello, ${name}`);
+
   greet('Robert Molina');
 ```
 
 ### Default Parameters <a name="defaultparameters"></a>
+
 Arrow functions may also be defined with default argument values in case no respective arguments were passed, these default parameters may also be of any assigned type.
+
 ```ts
   const greet = (name: string = 'Robert') => console.log(`Hello, ${name}`);
+
   greet(); // Prints: "Robert"
 ```
 
 ### Spread Operators <a name="spreadoperators"></a>
+
 > Spread syntax allows an iterable such as an array expression or string to be expanded in places where zero or more arguments (for function calls) or elements (for array literals) are expected, or an object expression to be expanded in places where zero or more key-value pairs (for object literals) are expected.
+
 ```ts
   const numbers: number[] = [-3, 33, 38, 5];
+
   console.log(Math.min(...numbers));
 
   const newArray: number[] = [55, 20, ...numbers];
+
   console.log(newArray);
 ```
 
 ### Array Destructuring <a name="arraydestructuring"></a>
+
 Arrays may also be destructured in TypeScript, keep in mind that all the assigned types to the array values won't be lost when destructured.
+
 ```ts
   const testResults: number[] = [3.89, 2.99, 1.38];
   const [result1, result2, result3] = testResults;
+
   console.log(result1, result2, result3);
 ```
 
 ### Object Destructuring <a name="objectdestructuring"></a>
+
 Just like arrays, the destructured object value pairs will keep their previously assigned types. Keep in mind that when destructuring an object, the declared variable name **must** match the object key to let the compiler know which variable to destructure.
+
 ```ts
   const scientist: { firstName: string, experience: number } = { firstName: 'Robert', experience: 9000 };
   const { firstName, experience } = scientist;
+
   console.log(firstName, experience);
 ```
 ---
@@ -371,13 +458,18 @@ Classes may also be extended. By extending a class, we can declare another class
       this.printAge()
     }
   }
+
   const robert = new Robert('rmolinamir', 'example@email.com');
+
   console.log(robert);
 ```
 
 The class Robert, would be able to access all of the Person members, and overwrite them if possible. **Note that `super` has to be called in the constructor of the Robert class, to execute any logic that may be stored inside the parent Person class' constructor. If not called, side effects may happen**.
 
 ## Getters & Setters <a name="getterssetters"></a>
+
+TypeScript offers two great features for classes: `get`, and `set`. These are keywords that can be used to create a getter or setter function that can share the same name, and run whatever logic the programmer decides to pass into. Here's an example:
+
 ```ts
   class Plant {
     private _species: string = 'Default';
@@ -393,7 +485,9 @@ The class Robert, would be able to access all of the Person members, and overwri
     }
     public getSpecies = () => this._species
   }
+
   const plant = new Plant();
+
   console.log(plant.species); // Prints Default
   plant.species = 'AB';
   console.log(plant.species); // Prints Default
@@ -401,7 +495,12 @@ The class Robert, would be able to access all of the Person members, and overwri
   console.log(plant.species); // Prints Green Plant
 ```
 
+To `set` *species*, we would do an expression such as `plant.species = 'AB';`, and to `get` *species*, we would simply refer to the *species* property of the `plant` object.
+
 ## Static Properties & Methods <a name="staticpropertiesmethods"></a>
+
+Static properties and methods are class members that can be accessed from an outer scope scope of the `class`, **and** without having to instantiate the class either. Here's an example:
+
 ```ts
   class Helpers {
     static PI: number = 3.14;
@@ -409,12 +508,14 @@ The class Robert, would be able to access all of the Person members, and overwri
       return this.PI * diameter;
     }
   }
-  console.log(Helpers.PI);
-  console.log(2 * Helpers.PI);
-  console.log(Helpers.calcCircunferance(10));
+
+  console.log(Helpers.PI); // Prints: 3.14
+  console.log(2 * Helpers.PI); // Prints: 6.28
+  console.log(Helpers.calcCircunferance(10)); // Prints: 31.42
 ```
 
 ## Abstract Classes <a name="abstractclasses"></a>
+
 > Abstract classes are base classes from which other classes may be derived. They may not be instantiated directly. Unlike an interface, an `abstract class` may contain implementation details for its members. **The `abstract` keyword is used to define abstract classes as well as abstract methods within an abstract class.**
 
 A great comparison and example for `abstract classes` is the React.js `Component` class, that we use to extend our own custom components, like the typical:
@@ -449,7 +550,9 @@ Think of `abstract` methods as methods that **won't** be passed down to the inhe
       this.projectName = name;
     }
   }
+
   const newProject = new ITProject();
+
   console.log(newProject) // Prints: { projectName: "Default", budget: 0, ...  }
   newProject.changeName('Super IT Project');
   console.log(newProject); // Prints: { projectName: "'Super IT Project", budget: 0, ...  }
@@ -513,6 +616,7 @@ The module code generation may be specified in the `tsconfig.json` file. **The c
 4. [Advanced Module Loading](#advancedmoduleloading)
 
 ### Export <a name="export"></a>
+
 > Any declaration (such as a `variable`, `function`, `class`, type alias, `enum` or `interface`) can be exported by adding the export keyword.
 
 Exporting a `variable` and a `function`:
@@ -529,6 +633,7 @@ Exporting an `interface` for a react.js `class` component's state:
   export interface IAppState {
     counterValue: number;
   }
+
   class App extends React.Component<{} /* IAppProps */, IAppState> {
     public state = { counterValue: 0 }; // State is required to be public.
     // ...
@@ -556,6 +661,7 @@ Exporting an `interface` for a react.js `functional` component `onClick` handler
 ```
 
 ### Default Exports <a name="defaultexports"></a>
+
 > Each module can optionally export a default export. Default exports are marked with the keyword default; and there can only be one default export per module. default exports are imported using a different import form.
 
 The `default` exports are really handy. For instance, a library like React.js might have a default export of `React`, commonly imported under the name `React`. Each file may only have **one** default export, for example:
@@ -569,6 +675,7 @@ The `default` exports are really handy. For instance, a library like React.js mi
 ```
 
 ### Import <a name="import"></a>
+
 > Importing is just about as easy as exporting from a module. 
 
 Importing an exported declaration is done through using the `import` keyword. For example, considering the `PI`, `calculateCircumference`, and `calculateRectangle` export examples shown above, this is how we would import them into our `app.ts` file with the following folder structure:
@@ -586,12 +693,14 @@ TypeScript v^3.0
 ```ts
   import { PI, calculateCircumference } from './src/circle'
   import calculateRectangle from './src/rectangle'
+
   console.log(PI); // Prints: 3.14
   console.log(calculateCircumference(10)); // Prints: 31.42
   console.log(calculateRectangle(5, 10)); // Prints: 50
 ```
 
 ### Advanced Module Loading <a name="advancedmoduleloading"></a>
+
 > In some cases, you may want to only load a module under some conditions. In TypeScript, we can use the pattern shown below to implement this and other advanced loading scenarios to directly invoke the module loaders without losing type safety.
 
 Sometimes we might be in a situation where we only want to load certain parts of our application dynamically. This may be to reduce the initial load time or to improve performance.
@@ -626,7 +735,9 @@ While keeping that in mind, here are some examples as shown in the [TypeScript o
 ***Sample: Dynamic Module Loading in requirejs, pay attention to the `onLoad` argument:***
 ```ts
   declare function require(moduleNames: string[], onLoad: (...args: any[]) => void): void;
+
   import * as Zip from "./ZipCodeValidator";
+
   if (needZipValidation) {
     require(["./ZipCodeValidator"], (ZipCodeValidator: typeof Zip) => {
       let validator = new ZipCodeValidator.ZipCodeValidator();
@@ -638,7 +749,9 @@ While keeping that in mind, here are some examples as shown in the [TypeScript o
 ***Sample: Dynamic Module Loading in System.js. Using the imported `System` object from the library:***
 ```ts
   declare const System: any;
+
   import { ZipCodeValidator as Zip } from "./ZipCodeValidator";
+
   if (needZipValidation) {
       System.import("./ZipCodeValidator").then((ZipCodeValidator: typeof Zip) => {
           var x = new ZipCodeValidator();
@@ -747,6 +860,7 @@ Here is an example as shown in the [TypeScript official documentation about modu
     }
     export function parse(urlStr: string, parseQueryString?, slashesDenoteHost?): Url;
   }
+
   declare module "path" {
     export function normalize(p: string): string;
     export function join(...paths: any[]): string;
@@ -764,7 +878,7 @@ Afterwards we are able to `/// <reference>` the node.d.ts as shown in the `names
 
 Sounds a bit complicated but it's actually really easy to import a third library. Here the simplest two alternatives: 
 
-#### *1.* Using a `d.ts` file that will put the jQuery `$` variable in the global scope of the application:
+### Using a `d.ts` file that will put the jQuery `$` variable in the global scope of the application: <a name="jquery.d.ts"></a>
 
 Here is how we could import jQuery into a simple application using `requirejs`, consider the following organization scheme:
 
@@ -812,7 +926,7 @@ With jQuery declared in a `.d.ts` file, it will now be available inside the glob
 
 However, one disadvantage of this alternative is that the IDE will not have access to the jQuery `$` variable object, making it a little difficult to write code. This disadvantage is fortunately overcome using the second alternative.
 
-#### *2.* Using @types/jquery NPM package:
+### Using @types/jquery NPM package: <a name="@types/jquery"></a>
 
 The problem with the first alternative, is that by declaring jQuery's `$` as type `any` (`declare var $: any;`), we are basically telling the compiler to *assume* that it will have access to jQuery in runtime. But that's not practical. 
 
@@ -861,6 +975,7 @@ TypeScript v^3.0
 Notice the difference? We don't need to have the declare `.d.ts` file anymore, because the compiler will pick up on the `.d.ts` files inside the `@types/jquery` library.
 
 ### Shorthand ambient modules <a name="shorthandambientmodules"></a>
+
 > If you don’t want to take the time to write out declarations before using a new module, you can use a shorthand declaration to get started quickly.
 
 *declarations.d.ts*
@@ -869,6 +984,7 @@ Notice the difference? We don't need to have the declare `.d.ts` file anymore, b
 ```
 
 ### Wildcard module declarations <a name="wildcardmoduledeclarations"></a>
+
 > Some module loaders such as SystemJS and AMD allow non-JavaScript content to be imported. These typically use a prefix or suffix to indicate the special loading semantics. Wildcard module declarations can be used to cover these cases.
 
 ```ts
@@ -876,6 +992,7 @@ Notice the difference? We don't need to have the declare `.d.ts` file anymore, b
       const content: string;
       export default content;
   }
+
   // Some do it the other way around.
   declare module "json!*" {
       const value: any;
@@ -883,6 +1000,7 @@ Notice the difference? We don't need to have the declare `.d.ts` file anymore, b
   }
 ```
 ### UMD modules <a name="umdmodules"></a>
+
 > Some libraries are designed to be used in many module loaders, or with no module loading (global variables). These are known as UMD modules. These libraries can be accessed through either an import or a global variable. For example:
 
 *math-lib.d.ts*
@@ -890,3 +1008,339 @@ Notice the difference? We don't need to have the declare `.d.ts` file anymore, b
   export function isPrime(x: number): boolean;
   export as namespace mathLib;
 ```
+
+---
+
+## Interfaces <a name='interfaces'></a>
+> One of TypeScript’s core principles is that type-checking focuses on the shape that values have. This is sometimes called “duck typing” or “structural subtyping”. In TypeScript, interfaces fill the role of naming these types, and are a powerful way of defining contracts within your code as well as contracts with code outside of your project.
+
+We can think of **interfaces** as a way to assign types to the structure of a variable. This variable may be an `argument`, a `class`, an `object`, you name it, think of it as making a **contract** with the `interface`. Here's how we can define a very simple `interface` and use it on a `variable` and on a `function`:
+
+```ts
+  interface SimplePerson {
+    firstName: string;
+  }
+
+  const simplePerson: SimplePerson = { firstName: 'Robert' };
+
+  const simpleGreet = (simplePerson: SimplePerson) => console.log(`Hello ${simplePerson}!`);
+
+  simpleGreet(simplePerson); // Prints: "Hello Robert!"
+```
+
+You might think this would make interfaces not scallable because of very restrictive properties, but fortunately **properties can be optional**. To define an interface property as optional, we must place a `?` character in front of the key name of the property when defining it. Here's an example:
+
+```ts
+  interface SimplePerson {
+    firstName: string;
+    lastName?: number;
+    age?: number;
+  }
+
+  // const wrong: SimplePerson = { lastName: 'Molina', age: 24 }; // Not possible because the firstName key value pair is missing.
+  const right: SimplePerson = { firstName: 'Robert', age: 24 };
+```
+
+We may also define the interface with *index signatures*, think of them like dynamic key value pairs. Here's an example:
+
+```ts
+  interface NamedPerson {
+    firstName: string;
+    age?: number;
+    [propName: string]: any;
+  }
+
+  const person: NamedPerson = {
+    firstName: 'Robert',
+    lastName: 'Molina',
+    age: 24,
+    hobbies: ['Programming', 'Cooking'],
+    greet(lastName: string) {
+      console.log(`Hi, I am ${this.firstName} ${lastName}!`);
+    }
+  }
+```
+
+Notice how we can add very different properties now? This is a way of telling the compiler the following when declaring and defining `person`:
+
+1. `person` **must** have a *`firstName`* property type `string`.
+2. `person` **may** have an *`age`* property. It **must** be of type `string` if it exists, anything else will result in an error when compiling.
+3. `person` **may** then have any type of properties because of the **index signature**: `[propName: string]: any;`.
+
+### Implements Keyword <a name="implementskeyword"></a>
+
+> One of the most common uses of interfaces in languages like `C#` and `Java`, that of explicitly enforcing that a class meets a particular contract, is also possible in TypeScript.
+
+Here are two more advanced examples, we can use an `interface` to define the subtypes of a `class`, or a `function`:
+
+#### *1.* Implementing an `interface` to a `Class`: <a name="implementinginterfacetoclass"></a>
+
+```ts
+  interface NamedPerson {
+    firstName: string;
+    age?: number;
+    [propName: string]: any;
+    greet(lastName: string): void;
+  }
+
+  class Person implements NamedPerson {
+    constructor(public firstName: string, public lastName: string) {}
+    greet(lastName: string) {
+      console.log(`Hi, I am ${this.firstName} ${lastName}!`);
+    }
+  }
+
+  const myPerson = new Person('Robert', 'Molina');
+  greet(myPerson); // Prints: "Hi, I am Robert Moina"
+```
+
+> Interfaces describe the **`public` side of the class**, rather than both the `public` and `private` side. This prohibits you from using them to check that a class also has particular types for the private side of the class instance.
+
+**Note that classes may be extended to another `class` and tied to an `interface` by using the `implements` keyword**. 
+
+Here is an example as shown in the [TypeScript official documentation about interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html):
+
+```ts
+  class Control {
+      private state: any;
+  }
+
+  interface SelectableControl extends Control {
+      select(): void;
+  }
+
+  class Button extends Control implements SelectableControl {
+      select() { }
+  }
+```
+
+#### *2.* Implementing an `interface` to a `function`: <a name="implementinginterfacetofunction"></a>
+
+> As we mentioned earlier, interfaces can describe the rich types present in real world JavaScript. Because of JavaScript’s dynamic and flexible nature, you may occasionally encounter an object that works as a combination of some of the types described above.
+
+One such example is an object that acts as both a function and an object, with additional properties:
+
+```ts
+  interface DoubleValueFunc {
+    (number1: number, number2: number): number;
+  }
+
+  let myDoubleFunction: DoubleValueFunc;
+  myDoubleFunction = (num1: number, num2: number) => {
+    return (num1 + num2) * 2;
+  }
+
+  console.log(myDoubleFunction(10,50)); // Prints: 120
+```
+
+### Extends Keyword (Interface Inheritance) <a name="extendskeyword"></a>
+
+Just like how a `class` may extend its properties by inheriting `class` or `abstract class` properties, **interfaces may also inherit properties to extend its own properties**. It's done exactly as you'd expect, here's an example using the `NamedPerson` interface shown in the examples above to extend a new interface defined as `AgedPerson`:
+
+```ts
+  interface NamedPerson {
+    firstName: string;
+    age?: number;
+    [propName: string]: any;
+    greet(lastName: string): void;
+  }
+
+  interface AgedPerson extends NamedPerson {
+    age: number;
+  }
+
+  const oldPerson: AgedPerson = {
+    age: 74,
+    firstName: 'An Old Guy',
+    greet(lastName: string) {
+      console.log(`Hello Sr. ${lastName}.`);
+    }
+  }
+```
+As you can see, the `oldPerson` will be restricted to the `AgePerson` type structure, which inherits all of `NamedPerson` properties.
+
+---
+
+## Generics <a name='generators'></a>
+
+> A major part of software engineering is building components that not only have well-defined and consistent APIs, but are also reusable. Components that are capable of working on the data of today as well as the data of tomorrow will give you the most flexible capabilities for building up large software systems.
+
+> In languages like `C#` and `Java`, one of the main tools in the toolbox for creating reusable components is generics, that is, being able to create a component that can work over a variety of types rather than a single one. This allows users to consume these components and use their own types.
+
+Generics are a way to help us write dynamic, flexible code. To explain what generics are, let's take a look at the example below:
+
+```ts
+  function echo(data: string) {
+    return data;
+  }
+```
+
+That is **not** a generic function. Generics are reusable components (be it a `function`, an `object`, a `class`) that can be used multiple times for multiple variable types, like a `string`, a `number`, `boolean`, etc. Next we'll see how to properly write Generics in TypeScript and different types of Generics.
+
+### Simple Generic <a name="simplegenerics"></a>
+
+To write a generic, let's take the example above and turn it into a simple generic function. Here's how the original `echo` function would be rewritten into a simple generic:
+
+```ts
+  function echo(data: any) {
+    return data;
+  }
+
+  console.log(echo('Robert')); // Prints: "Robert"
+  console.log(echo(24).length); // Prints: undefined.
+  console.log(echo({ name: 'Robert', age: 24 })); // Prints: { name: "Robert", age: 24 }
+```
+Our function is now a generic function, it can accept `any` type of argument and returns a value of equal type. But this function is not really practical for two reasons:
+
+1. The compiler doesn't know what the **type** of the return value will be.
+2. Because of the above, the IDE won't know what value **type** will be returned from the function, resulting in higher difficulty to access its properties, we would have to be sure beforehand. The program could also crash if an undefined variable is used later on.
+
+Now how in the example above, we can't access the `length` property of a string, because `echo` returns a `number`, but neither the compiler nor the IDE knows this **because we are losing information about said type**. We can fortunately fix this however, by using **better generics**.
+
+### Better Generic <a name="bettergenerics"></a>
+
+While the example above is technically a generic function, let's now improve by making use of a TypeScript it so that we can know what type will be returned from `echo`. Here is an example:
+
+```ts
+  function betterEcho<T>(data: T) {
+    return data;
+  }
+```
+
+> We’ve now added a type variable `T` to the function. This `T` allows us to capture the type the user provides (e.g. `number`), so that we can use that information later. Here, we use `T` again as the return type.
+
+By using the angle brackets right beside `betterEcho`, it's a way of saying to the compiler and the IDE the following: *"hey, `betterEcho` must return a value **type** *equal* to the **type** of the `data` argument"*. Here is an example of using `betterEcho` and how the compiler would behave:
+
+```ts
+  // Now I get types in the IDE, the compiler also knows what type is returned from betterEcho.
+  console.log(betterEcho('Robert').length);
+// console.log(betterEcho(24).length); // Compiler & IDE warning: Property 'length' does not exist on type `number`.
+  console.log(betterEcho<number>(24).toExponential(2)); // I would get IDE support.
+  console.log(betterEcho({ name: 'Robert', age: 24 }).age); // I would also get IDE support.
+```
+
+This way both the compiler **and** the IDE will know what type will be returned from `betterEcho`. **The compiler won't even run if `noEmitOnError` is true inside the `tsconfig.json` file. [More info about this here] (https://www.typescriptlang.org/docs/handbook/compiler-options.html)**
+
+### Built-in Generics <a name="builtingenerics"></a>
+
+Some types though, have *built-in generics*. I've even used some as examples before without having touched yet on generics. Here is a very simple examples:
+
+```ts
+  const testResults: Array<number> = [1.94, 2,33];
+  testResults.push(-2.99);
+  // testResults.push('string'); // Not possible.
+
+  // Arrays
+  function printAll<T>(args: T[]) {
+    args.forEach(element => console.log(element));
+  }
+
+  printAll<string>(['Apple', 'Banana']);
+  printAll<number>([1, 3, 5]);
+  // printAll<number>([1, 'string', 5]); // Not possible.
+```
+
+Arrays have built-in generics. The constant `testResults` is an array that will accept any value that is of type `number`. The function `printAll` will also accept any `array` of `T` type as an argument, turning `printAll` into a generic function.
+
+
+### Generic Types <a name="generictypes"></a>
+
+The `Generic Types` are **exactly** what the name says. It's a way of declaring any kind of variable with a generic type. Let's see how to create generic functions and generic interfaces. For example:
+
+**Functions:**
+
+```ts
+  function betterEcho<T>(data: T) {
+    return data;
+  }
+
+  const echoStr: <T>(data: T) => T = betterEcho;
+  console.log(echoStr<string>('Hello world!').toLocaleUpperCase()); // Prints: "HELLO WORLD!"
+
+  const echoNum: <T>(data: T) => T = betterEcho;
+  console.log(echoNum<number>(312).toString()); // Prints: "312"
+```
+
+> The type of generic functions is just like those of non-generic functions, with the type parameters listed first, similarly to function declarations.
+
+**Interfaces:**
+
+Here is an example as shown in the [TypeScript official documentation about generic types](https://www.typescriptlang.org/docs/handbook/generics.html):
+
+```ts
+  interface GenericIdentityFn<T> {
+      (arg: T): T;
+  }
+
+  function identity<T>(arg: T): T {
+      return arg;
+  }
+
+  let myIdentity: GenericIdentityFn<number> = identity;
+```
+
+> Notice that our example has changed to be something slightly different. Instead of describing a generic function, we now have a non-generic function signature that is a part of a generic type. When we use `GenericIdentityFn`, we now will also need to specify the corresponding type argument (here: number), effectively locking in what the underlying call signature will use. Understanding when to put the type parameter directly on the call signature and when to put it on the interface itself will be helpful in describing what aspects of a type are generic.
+
+### Generic Class <a name="genericclass"></a>
+
+> A generic class has a similar shape to a generic interface. Generic classes have a generic type parameter list in angle brackets (<>) following the name of the class.
+
+Here is a simple example for starters using **`constraints`**. The generic types may be constrained by **extending** them to certain types. For example, we may **constrain** (with the `extends` keyword) a type `T` to type `number`, or type `string` **only**. Here is an example:
+
+```ts
+  class GenericMath<T extends number | string> {
+    constructor(public baseValue: T, public multiplyValue: T) {}
+    calculate(): number {
+      return +this.baseValue * +this.multiplyValue
+    }
+  }
+
+  // const genericMath = new GenericMath<number>(10, 'string'); // Not possible because 'string' can't be converted to a number.
+  // const genericMathBoolean = new GenericMath<boolean>(10, '20'); // Not possible because T only extends to number and string only.
+  const onlyNumbers = new GenericMath<number>(10, 20);
+  const onlyStrings = new GenericMath<string>('10', '20');
+  const bothTypes = new GenericMath<number | string>(10, '20');
+
+  console.log(onlyNumbers.calculate()); // Prints: 200
+  console.log(onlyStrings.calculate()); // Prints: 200
+  console.log(bothTypes.calculate()); // Prints: 200
+```
+
+Notice how `T` type is defined. **`T` extends to the `number` type, `or` to the `string` type only**. This means that everything referring to `T` inside the generic class `GenericMath`, can be of type `number` or type `string` (e.g. the constructor arguments), depending on how its set when calling the constructor.
+
+Here is a more advanced example where we use **multiple tipes** when defining the generic class types:
+
+```ts
+  class MultipleTypesMath<T extends number, U extends number | string> {
+    constructor(public baseValue: T, public multiplyValue: U) {}
+    calculate(): number {
+      return +this.baseValue * +this.multiplyValue
+    }
+  }
+
+  const multipleTypesMath = new MultipleTypesMath<number, number | string>(5, '20');
+
+  console.log(multipleTypesMath.calculate()); // Prints: 100
+```
+
+Now we have **two** types, `T` and `U` and both are constrained, but to different types. The constructor argument `baseValue` is defined as type `T`, and `T` only extends to type `number`, which results in `baseValue` only accepting values of type `number` when calling the constructor.
+
+`U` only accepts values of type `number` or `string`, and it's assigned to the `multiplyValue` argument of the constructor.
+
+---
+
+## Decorators <a name='decorators'></a>
+
+
+
+---
+
+## Workflows <a name='workflows'></a>
+
+
+
+---
+
+## TypeScript with React.js <a name='typescriptreactjs'></a>
+
+---
