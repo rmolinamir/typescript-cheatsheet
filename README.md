@@ -453,7 +453,9 @@ Think of `abstract` methods as methods that **won't** be passed down to the inhe
 
 As the name of this section implies, a singleton is class that can only be instantiated **once**, or in other words, a class that can only have **one** object, single(ton).
 
-In TypeScript 2.0 and onwards, we can create a static class member method that I usually define as `getInstance`. Since `getInstance` is a member of the class, it can access the constructor. Meaning, it can execute the constructor, then save the instance **as a member of the same class**. It is also possible to improve this further, and only allow `getInstance` to be executed only **once**, and avoid multiple instances of this class. If it already exist, we can always return the previously created instance, here's an example with a class named `OnlyOne`:
+In TypeScript 2.0 and onwards, we can create a static class member method that I usually define as `getInstance`. Since `getInstance` is a member of the class, it can access the constructor. Meaning, it can execute the constructor, then save the instance **as a member of the same class**. It is also possible to improve this further, and only allow `getInstance` to be executed only **once**, and avoid multiple instances of this class. 
+
+If it already exists, we can always return the previously created instance, here's an example with a class named `OnlyOne`:
 
 ```ts
   class OnlyOne {
