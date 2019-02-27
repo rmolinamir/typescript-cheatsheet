@@ -1,27 +1,13 @@
 {
   "name": "typescript-cheatsheet",
   "version": "1.0.0",
-  "description": "",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "lite-server",
-    "build": "tsc app.ts --outFile  app.js --module amd"
-  },
+  "description": "A set of TypeScript related notes used for quick reference. The cheatsheet contains references to types, classes, decorators, and many other TypeScript related subjects.",
+  "private": true,
   "repository": {
     "type": "git",
     "url": "git+https://github.com/rmolinamir/typescript-cheatsheet.git"
   },
-  "author": "",
+  "author": "rmolinamir",
   "license": "ISC",
-  "bugs": {
-    "url": "https://github.com/rmolinamir/typescript-cheatsheet/issues"
-  },
-  "homepage": "https://github.com/rmolinamir/typescript-cheatsheet#readme",
-  "devDependencies": {
-    "lite-server": "^2.4.0"
-  },
-  "dependencies": {
-    "requirejs": "^2.3.6"
-  }
+  "homepage": "https://github.com/rmolinamir/typescript-cheatsheet#readme"
 }
