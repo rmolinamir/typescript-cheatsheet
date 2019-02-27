@@ -1,0 +1,27 @@
+{
+  "name": "typescript-cheatsheet",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server",
+    "build": "tsc app.ts --outFile  app.js --module amd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmolinamir/typescript-cheatsheet.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rmolinamir/typescript-cheatsheet/issues"
+  },
+  "homepage": "https://github.com/rmolinamir/typescript-cheatsheet#readme",
+  "devDependencies": {
+    "lite-server": "^2.4.0"
+  },
+  "dependencies": {
+    "requirejs": "^2.3.6"
+  }
+}

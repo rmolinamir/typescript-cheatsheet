@@ -1,0 +1,54 @@
+.App {
+  text-align: center;
+}
+
+.App-logo {
+  animation: App-logo-spin infinite 20s linear;
+  height: 80px;
+}
+
+.App-header {
+  background-color: #222;
+  height: 150px;
+  padding: 20px;
+  color: white;
+}
+
+.App-title {
+  font-size: 1.5em;
+}
+
+.App-intro {
+  font-size: large;
+}
+
+.Counter {
+  color: #222;
+  font-size: 31px;
+  font-weight: bold;
+}
+
+.CounterButton {
+  color: #FFF;
+  background-color: #222;
+  font-size: 31px;
+  font-weight: bold;
+  outline: none;
+  padding: 12px 24px;
+  margin: 0 12px;
+  border: 1px solid #fff;
+  border-radius: 12px;
+  cursor: pointer;
+  transition: all ease 200ms;
+}
+
+.CounterButton:hover, .CounterButton:focus {
+  color: #222;
+  border: 1px solid #222;
+  background-color: #FFF;
+}
+
+@keyframes App-logo-spin {
+  from { transform: rotate(0deg); }
+  to { transform: rotate(360deg); }
+}

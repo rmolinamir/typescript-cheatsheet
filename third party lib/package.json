@@ -1,0 +1,28 @@
+{
+  "name": "typescript-using-js-libraries",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "lite-server",
+    "build": "tsc app.ts --outFile  app.js --module amd"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/rmolinamir/typescript-using-js-libraries.git"
+  },
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/rmolinamir/typescript-using-js-libraries/issues"
+  },
+  "homepage": "https://github.com/rmolinamir/typescript-using-js-libraries#readme",
+  "devDependencies": {
+    "@types/jquery": "^3.3.29",
+    "lite-server": "^2.4.0"
+  },
+  "dependencies": {
+    "requirejs": "^2.3.6"
+  }
+}
