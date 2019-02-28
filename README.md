@@ -1751,4 +1751,4 @@ And thank you very much for taking the time to do so 💖
 Contributions are always welcome! Just like before, submit a PR and let me know at:
 
 - [u/rmolinamir](https://www.reddit.com/user/rmolinamir)
-- [rmolinamir@gmail.com](mailto:rmolinamir@gmail.com) as protocol)
+- [rmolinamir@gmail.com](mailto:rmolinamir@gmail.com)
