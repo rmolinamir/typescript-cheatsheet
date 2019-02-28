@@ -1,4 +1,6 @@
-![TypeScript](https://github.com/rmolinamir/typescript-cheatsheet/blob/master/TypeScript.png)
+<p align="center">
+  <img src="https://raw.githubusercontent.com/rmolinamir/typescript-cheatsheet/master/TypeScript.png" alt="TypeScript"/>
+</p>
 
 # TypeScript Cheatsheet
 
