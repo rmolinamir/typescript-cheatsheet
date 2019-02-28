@@ -15,12 +15,11 @@ class Person {
  * Factory functions return decorators.
  */
 function logging(value: boolean) {
-  return value ? logged : () => {}; // Execute a 
+  return value ? logged : () => {};
 }
 
 @logging(true)
 class Car {
-  
 }
 
 // Advanced Decorator
@@ -76,12 +75,11 @@ class Project {
 
 const project = new Project('Super Project');
 project.calcBudget(); // Prints: 1000
-// project.calcBudget = () => { // Throws error in console IF editable is false, cannot assign new property to this. // No longer possible with editable(true).
+// project.calcBudget = () => { // Throws error in console IF editable is false, cannot assign new property to this.
 //   console.log(2000);
 // };
 // project.calcBudget(); // Prints: 2000 // No longer possible with editable(true).
-console.log(project) // IF overwritable is false, then it will crash since projectName would be a readonly variable.
-
+console.log(project) // IF overwritable is false, then it equal to undefined.
 // Parameter Decorator
 function printInfo(target: any, methodName: string, paramIndex: number) {
   console.log('Target: ', target);

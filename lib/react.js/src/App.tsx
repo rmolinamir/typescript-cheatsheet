@@ -1,19 +1,19 @@
 import * as React from 'react';
 // CSS & Assets
 import './App.css';
-import CounterOutput, { CounterHandlers } from './CounterOutput';
+import CounterOutput, { ECounterHandlers } from './CounterOutput';
 import logo from './logo.svg';
 
 /**
  * MORE INFO AT REACT TYPESCRIPT.
  */
 
-// interface IAppProps {}
+interface IAppProps {[propName]: any}
 interface IAppState {
   counterValue: number;
 }
 
-class App extends React.Component<{} /* IAppProps */, IAppState> {
+class App extends React.Component<IAppProps, IAppState> {
   public state = { counterValue: 0 }; // State is required to be public.
 
   public render() {
@@ -32,12 +32,12 @@ class App extends React.Component<{} /* IAppProps */, IAppState> {
     );
   }
 
-  private counterHandler = (mode: CounterHandlers) => {
+  private counterHandler = (mode: ECounterHandlers) => {
     this.setState(prevState => {
       switch(mode) {
-        case CounterHandlers.Dec:
+        case ECounterHandlers.Dec:
           return { counterValue: prevState.counterValue - 1 }
-        case CounterHandlers.Inc:
+        case ECounterHandlers.Inc:
           return { counterValue: prevState.counterValue + 1 }
       }
     });

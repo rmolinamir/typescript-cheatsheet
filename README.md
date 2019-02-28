@@ -59,14 +59,24 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [Implementing an `interface` to a `function`](#implementinginterfacetofunction)
       2. [Extends Keyword (Interface Inheritance)](#extendskeyword)
 9. [Generics](#generators)
-      1. [Simple Generic](#simplegenerics)
-      2. [Better Generic](#bettergenerics)
+      1. [Simple Generics](#simplegenerics)
+      2. [Better Generics](#bettergenerics)
       3. [Built-in Generics](#builtingenerics)
       4. [Generic Types](#generictypes)
       5. [Generic Class](#genericclass)
 10. [Decorators](#decorators)
-11. [Workflows](#workflows)
+      1. [Prologue](#decoratorsprologue)
+      2. [Introduction](#decoratorsintroduction)
+      3. [Basic Decorator](#basicdecorator)
+      4. [Factory](#factory)
+      5. [Advanced Decorator](#advanceddecorator)
+      6. [Method Decorator](#methoddecorator)
+      7. [Property Decorator](#propertydecorator)
+      8. [Parameter Decorator](#parameterdecorator)
+11. [Webpack Workflow (v^4.X)](#workflows)
 12. [TypeScript with React.js](#typescriptreactjs)
+13. [Feedback](#feedback)
+14. [Contribute](#contribute)
 
 ---
 
@@ -642,19 +652,19 @@ Exporting an `interface` for a react.js `class` component's state:
 
 Exporting an `interface` for a react.js `functional` component `onClick` handlers:
 ```tsx
-  export enum CounterHandlers {
+  export enum ECounterHandlers {
     Inc,
     Dec
   }
   interface ICounterOutputProps {
     counter: number;
-    onClick: (mode: CounterHandlers) => void;
+    onClick: (mode: ECounterHandlers) => void;
   }
   const counterOutput = (props: ICounterOutputProps) => {
     return (
       /// ...
-        <button onClick={() => props.onClick(CounterHandlers.Dec)}>Decrement</button>
-        <button onClick={() => props.onClick(CounterHandlers.Inc)}>Increment</button>
+        <button onClick={() => props.onClick(ECounterHandlers.Dec)}>Decrement</button>
+        <button onClick={() => props.onClick(ECounterHandlers.Inc)}>Increment</button>
       /// ...
     );
   }
@@ -1177,7 +1187,7 @@ Generics are a way to help us write dynamic, flexible code. To explain what gene
 
 That is **not** a generic function. Generics are reusable components (be it a `function`, an `object`, a `class`) that can be used multiple times for multiple variable types, like a `string`, a `number`, `boolean`, etc. Next we'll see how to properly write Generics in TypeScript and different types of Generics.
 
-### Simple Generic <a name="simplegenerics"></a>
+### Simple Generics <a name="simplegenerics"></a>
 
 To write a generic, let's take the example above and turn it into a simple generic function. Here's how the original `echo` function would be rewritten into a simple generic:
 
@@ -1197,7 +1207,7 @@ Our function is now a generic function, it can accept `any` type of argument and
 
 Now how in the example above, we can't access the `length` property of a string, because `echo` returns a `number`, but neither the compiler nor the IDE knows this **because we are losing information about said type**. We can fortunately fix this however, by using **better generics**.
 
-### Better Generic <a name="bettergenerics"></a>
+### Better Generics <a name="bettergenerics"></a>
 
 While the example above is technically a generic function, let's now improve by making use of a TypeScript it so that we can know what type will be returned from `echo`. Here is an example:
 
@@ -1314,7 +1324,7 @@ Here is a more advanced example where we use **multiple tipes** when defining th
   class MultipleTypesMath<T extends number, U extends number | string> {
     constructor(public baseValue: T, public multiplyValue: U) {}
     calculate(): number {
-      return +this.baseValue * +this.multiplyValue
+      return +this.baseValue * +this.multiplyValue;
     }
   }
 
@@ -1331,16 +1341,414 @@ Now we have **two** types, `T` and `U` and both are constrained, but to differen
 
 ## Decorators <a name='decorators'></a>
 
+### Prologue <a name='decoratorsprologue'></a>
 
+Before getting into what decorators are, here is some important information taken from the [TypeScript official documentation about decorators](https://www.typescriptlang.org/docs/handbook/decorators.html):
+
+> With the introduction of Classes in TypeScript and ES6, there now exist certain scenarios that require additional features to support annotating or modifying classes and class members. Decorators provide a way to add both annotations and a meta-programming syntax for class declarations and members. Decorators are a stage 2 proposal for JavaScript and are available as an experimental feature of TypeScript.
+
+> **NOTE:  Decorators are an experimental feature that may change in future releases.**
+
+> To enable experimental support for decorators, you must enable the `experimentalDecorators` compiler option either on the command line or in your `tsconfig.json`:
+
+***Command Line:***
+
+```cli
+tsc --target ES5 --experimentalDecorators
+```
+
+***tsconfig.json:***
+
+```json
+{
+    "compilerOptions": {
+        "target": "ES5",
+        "experimentalDecorators": true
+    }
+}
+```
+
+### Introduction <a name='decoratorsintroduction'></a>
+
+> A Decorator is a special kind of declaration that can be attached to a class declaration, method, accessor, property, or parameter. Decorators use the form `@expression`, where **`expression`** must evaluate to a function that will be called at runtime with information about the decorated declaration.
+
+### Basic Decorator <a name="#basicdecorator"></a>
+
+Another way to explain a decorator would be to say that they are a way to enhance the functionality of a `class`. We can use decorators to add properties to a decorated class when its constructor is executed, for example. This is of course among many other things that are possible, more of this below.
+
+```ts
+  function logged(constructorFn: Function) {
+    console.log(constructorFn); // Will log the class Person constructor.
+  }
+
+  @logged
+  class Person {
+    constructor() {
+      console.log('Hi!');
+    }
+  }
+```
+
+Every time a new instance of `Person` is built, the **constructor function** will be logged into the console.
+
+### Factory <a name="#factory"></a>
+
+> If we want to customize how a decorator is applied to a declaration, we can write a decorator factory. A Decorator Factory is simply a function that returns the expression that will be called by the decorator at runtime.
+
+In other words, a factory is a functions that returns a decorator.
+
+```ts
+  function logged(constructorFn: Function) {
+    console.log(constructorFn); // Will log the class Person constructor.
+  }
+
+  // Factory
+  function logging(value: boolean) {
+    return value ? logged : () => {};
+  }
+
+  @logging(true) // If true, it will return the `logged` decorator, if false, it will execute an empty function.
+  class Car {
+
+  }
+```
+
+### Advanced Decorator <a name="#advanceddecorator"></a>
+
+Since decorators have access to a class constructor function, through the decorators we can access the class `prototype` and add properties to said class. In the example below we will add the `print` method to any `class` decorated by `printable` (to `Plant` in this case). Also notice in the next example how the argument passed to `logging` (same `factory` function as above) is `false`. This means the constructor won't be printed to the console through the `logged` decorator **(because the `factory` won't return it)**.
+
+```ts
+  function printable(constructorFn: Function) {
+    constructorFn.prototype.print = function() {
+      console.log(this);
+      this.name = 'Red Plant'
+    }
+  }
+
+  @logging(false)
+  @printable
+  class Plant {
+    private name = 'Green Plant';
+  }
+
+  const plant = new Plant();
+  (<any>plant).print(); // Would print the constructed Plant object: { name: "Green Plant" }, then change the name property.
+  console.log('After print() is executed', plant); // Prints: the constructed Plant object: { name: "Red Plant" }.
+```
+
+### Method Decorator <a name="#methoddecorator"></a>
+
+> A Method Decorator is declared just before a method declaration. The decorator is applied to the Property Descriptor for the method, and can be used to observe, modify, or replace a method definition. A method decorator cannot be used in a declaration file, on an overload, or in any other ambient context (such as in a declare class).
+
+Besides adding a decorator to the class, we can also add decorators to a class member method (and properties, parameters - more on this below). It is done in the exact same way.
+
+```ts
+  function editable(value: boolean) {
+    return function(target:any, propName: string, descriptor: PropertyDescriptor = {}) {
+      descriptor.writable = value;
+      Object.defineProperty(target, propName, descriptor);
+    }
+  }
+  
+  class Project {
+    constructor(name: string) {
+      this.projectName = name;
+    }
+
+    @editable(false)
+    calcBudget() {
+      console.log(1000);
+    }
+  }
+  
+  const project = new Project('Super Project');
+  project.calcBudget(); // Prints: 1000
+  // project.calcBudget = () => { // Throws warning in the console IF editable is false. Property won't ever be changed.
+  //   console.log(2000);
+  // };
+```
+
+In the above example, we are modifying the `calcBudget` object's writable property to avoid it from being changed in the future. If changed then a warning will be thrown in the console. [More information about PropertyDescriptors can be found here](https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/defineProperty).
+
+### Property Decorator <a name="#propertydecorator"></a>
+
+The good thing about decorators is that they are exactly as their name imply. With the property decorator, we can also change its property during runtime, among other things. Here's what the official documentation have to say about **property decorators**:
+
+> A Property Decorator is declared just before a property declaration. A property decorator cannot be used in a declaration file, or in any other ambient context (such as in a declare class). 
+
+The expression for the property decorator will be called as a function at runtime, with the following two arguments:
+
+1. Either the constructor function of the class for a static member, or the prototype of the class for an instance member.
+2. The name of the member.
+
+> **NOTE  A Property Descriptor is not provided as an argument to a property decorator due to how property decorators are initialized in TypeScript. This is because there is currently no mechanism to describe an instance property when defining members of a prototype, and no way to observe or modify the initializer for a property. The return value is ignored too. As such, a property decorator can only be used to observe that a property of a specific name has been declared for a class.**
+
+**That is not to say that a property's PropertyDescriptor object cannot  be modified.** We may define a new object descriptor and return it, here's an example of how to make a property with `writable` false:
+
+```ts
+  // Method Decorator
+  function editable(value: boolean) {
+    return function(target:any, propName: string, descriptor: PropertyDescriptor = {}) {
+      descriptor.writable = value;
+      Object.defineProperty(target, propName, descriptor);
+    }
+  }
+
+  // Property Decorator
+  function overwritable(value: boolean): any {
+    return function(target: any, propName: string): any {
+      const newDescriptor: PropertyDescriptor = { // New PropertyDescriptor object.
+        writable: value
+      };
+      return newDescriptor;
+    }
+  }
+
+  class Project {
+    @overwritable(false)
+    private projectName: string;
+
+    constructor(name: string) {
+      this.projectName = name;
+    }
+
+    @editable(true)
+    calcBudget() {
+      console.log(1000);
+    }
+  }
+  
+  const project = new Project('Super Project'); // The name won't be modified because the @overwritable decorator's argument is false.
+  project.calcBudget(); // Prints: 1000
+  project.calcBudget = () => { // Throws error in console IF the @editable decorator's argument is false, cannot assign new property to this.
+    console.log(2000);
+  };
+  project.calcBudget(); // Prints: 2000
+  console.log(project) // IF overwritable is false, then projectName will be equal to undefined.
+```
+
+### Parameter Decorator <a name="#parameterdecorator"></a>
+
+Let's quote the official documentation again:
+
+> A Parameter Decorator is declared just before a parameter declaration. The parameter decorator is applied to the function for a class constructor or method declaration. A parameter decorator cannot be used in a declaration file, an overload, or in any other ambient context (such as in a declare class).
+
+The expression for the parameter decorator will be called as a function at runtime, with the following three arguments:
+
+Either the constructor function of the class for a static member, or the prototype of the class for an instance member.
+
+1. The name of the member.
+2. The ordinal index of the parameter in the function’s parameter list.
+
+> **NOTE  A parameter decorator can only be used to observe that a parameter has been declared on a method.**
+
+Here is an example of how we can put that into practice:
+
+```ts
+  function printInfo(target: any, methodName: string, paramIndex: number) {
+    console.log('Target: ', target);
+    console.log('Method name: ', methodName);
+    console.log('Param index: ', paramIndex);
+  }
+
+  class Course {
+    name: string;
+
+    constructor(name: string) {
+      this.name = name;
+    }
+
+    // @printInfo behind printAll
+    printStudentNumbers(mode: string, @printInfo printAll: boolean) {
+      if (printAll) {
+        console.log(10000);
+      } else {
+        console.log(2000);
+      }
+    }
+  }
+
+  const course = new Course('TypeScript');
+  course.printStudentNumbers('anything', true);
+  course.printStudentNumbers('anything', false);
+
+```
+
+So, `@printInfo` will only be called at runtime whenever `printStudentNumbers` is executed. Here is what `@printInfo` would print for both instances:
+
+```js
+  Target: > Object {}
+  methodName: printStudentNumbers
+  paramIndex: 1 // Starts counting at 0. It's 1 because `printAll` is the second argument of `printStudentNumbers`.
+```
 
 ---
 
-## Workflows <a name='workflows'></a>
+## Webpack Workflow (v^4.X) <a name='workflows'></a>
 
+[Here is the official documentation about TypeScript made by the folks at Webpack](https://webpack.js.org/guides/typescript/).
 
+Here's the TLDR:
+
+1. Install the TypeScript compiler with `npm install --save-dev typescript ts-loader`.
+
+> We use ts-loader in this guide as it makes enabling additional webpack features, such as importing other web assets, a bit easier.
+
+2. Run `tsc --init`, then modify the `tsconfig.json` file to look like this or similar:
+
+```ts
+  {
+    "compilerOptions": {
+      "outDir": "./dist/",
+      "noImplicitAny": true,
+      "module": "es6",
+      "target": "es5",
+      "jsx": "react",
+      "allowJs": true
+    }
+  }
+```
+
+This will make sure the compiler can parse TypeScript down to ES5.
+
+3. Webpack `webpack.config.js` file configuration to handle TypeScript:
+```js
+  const path = require('path');
+
+  module.exports = {
+    entry:"./src/app.ts",
+    output: {
+      filename: 'bundle.js',
+      path: path.resolve(__dirname, 'dist')
+    },
+    devtool:"source-map",
+    resolve: {
+      extensions: ["*",".ts",".tsx",".js"]
+    },
+    module:{
+      rules: [
+        { test:/\.tsx?$/, loader:"ts-loader" }
+      ]
+    }
+  };
+```
+> This will direct webpack to enter through ./index.ts, load all .ts and .tsx files through the ts-loader, and output a bundle.js file in our current directory.
 
 ---
 
 ## TypeScript with React.js <a name='typescriptreactjs'></a>
 
+[Here is the official documentation about using TypeScript along with React.js](https://www.typescriptlang.org/docs/handbook/react-&-webpack.html).
+
+In this section though, I'll focus on how to use TypeScript while using `create-react-app`.
+
+1. Create the React.js application by running `npx create-react-app project-name --scripts-version=react-scripts-ts`.
+
+This will now also create the react app with all the configuration already set up and ready to go.
+
+[Here is an exmaple React.js app created by running the previous command.](https://github.com/rmolinamir/typescript-cheatsheet/tree/master/lib/react.js)
+
+When using an interface to declare the PropTypes, by convention we must write a capital I when defining an interface. Let's see an example about how we can use PropTypes together with interfaces, enums, and how to apply them: 
+
+***App.tsx***
+```tsx
+  // ...
+
+  interface IAppProps {[propName]: any}
+  interface IAppState {
+    counterValue: number;
+  }
+
+  class App extends React.Component<IAppProps, IAppState> {
+    public state = { counterValue: 0 }; // State is required to be public.
+
+    public render() {
+      return (
+        <div>
+          <p>
+            <CounterOutput 
+              counter={this.state.counterValue}
+              onClick={this.counterHandler} />
+          </p>
+        </div>
+      );
+    }
+
+    private counterHandler = (mode: ECounterHandlers) => {
+      this.setState(prevState => {
+        switch(mode) {
+          case ECounterHandlers.Dec:
+            return { counterValue: prevState.counterValue - 1 }
+          case ECounterHandlers.Inc:
+            return { counterValue: prevState.counterValue + 1 }
+        }
+      });
+    }
+  }
+
+  export default App;
+```
+***CounterOutput.tsx***
+```tsx
+  export enum ECounterHandlers {
+    Inc,
+    Dec
+  }
+
+  interface ICounterOutputProps {
+    counter: number;
+    onClick: (mode: ECounterHandlers) => void;
+  }
+  const counterOutput = (props: ICounterOutputProps) => {
+    return (
+      <div>
+        <p>{props.counter}</p>
+        <button onClick={() => props.onClick(ECounterHandlers.Dec)}>Decrement</button>
+        <button onClick={() => props.onClick(ECounterHandlers.Inc)}>Increment</button>
+      </div>
+    );
+  }
+```
+
+Notice the following:
+
+1. There's a capital E when defining the enum. That is a personal thing I picked up while using the Unreal Engine software that is based in `c++` which is similar in many ways to TypeScript, and it also makes sense since it's inline with the interface naming convention.
+2. Passing variables, defining and declaring components and everything else is exactly as you'd expect - with the extra features of TypeScript added on top of it.
+3. Remember that class members are `public` by default while using TypeScript, **but, a the state of a class component must always be public**.
+
+It is also possible to modify the `tsconfig.json` or the `tslint.json` to handle highlights in your IDE:
+
+```json
+  {
+    "extends": ["tslint:recommended", "tslint-react", "tslint-config-prettier"],
+    "linterOptions": {
+      "exclude": [
+        "config/**/*.js",
+        "node_modules/**/*.ts",
+        "coverage/lcov-report/*.js"
+      ]
+    },
+    "rules": {
+      "jsx-no-lambda": false
+    }
+  }
+```
+
+TypeScript by default doesn't like when lambda functions are used and the IDE will hightlight them as an error. To disable this, add the following rule into your `tslint.json` file: `"jsx-no-lambda": false`.
+
 ---
+
+## Feedback <a name='feedback'></a>
+
+This repository. Submit a PR with any change or addition you'd like to see!
+
+And thank you very much for taking the time to do so 💖
+
+---
+
+## Contribute <a name='contribute'></a>
+
+Contributions are always welcome! Just like before, submit a PR and let me know at:
+
+- [u/rmolinamir](https://www.reddit.com/user/rmolinamir)
+- [rmolinamir@gmail.com](mailto:rmolinamir@gmail.com) as protocol)
