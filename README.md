@@ -30,7 +30,7 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
       13. [Nullable](#nullable)
       14. [Type Assertions](#typeassertions)
 3. [ES6](#es6)
-      1. [Template Liberals](#templateliberals)
+      1. [Template Literals](#templatelilerals)
       2. [Arrow Functions](#arrowfunctions)
       3. [Default Parameters](#defaultparameters)
       4. [Spread Operators](#spreadoperators)
@@ -353,7 +353,7 @@ And the other is the `as`-syntax:
 
 TypeScript natively supports the newer ES6 (A.K.A. ECMAScript 6 and ECMAScript 2015) JavaScript features. As you may have guessed, we can assign types to these new features (e.g. assigning types to an arrow function). Here are some examples:
 
-### Template Liberals <a name="templateliberals"></a>
+### Template Literals <a name="templatelilerals"></a>
 
 ```ts
   const userName = 'Robert';
