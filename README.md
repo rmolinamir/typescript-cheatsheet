@@ -502,7 +502,8 @@ When a member is marked `private`, it cannot be accessed from outside of its con
    * setType: ƒ (type) 
    * type: "Cool guy" 
    * userName: "rm"
-   * /
+   * 
+   */
 ```
 
 If you want to prevent some properties or classes for being inherited, there is currently a proposal for the `final` keyword to be added.
