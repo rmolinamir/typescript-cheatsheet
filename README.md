@@ -37,10 +37,12 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
       5. [Array Destructuring](#arraydestructuring)
       6. [Object Destructuring](#objectdestructuring)
 4. [Classes](#classes)
-      1. [Getters & Setters](#getterssetters)
-      2. [Static Properties & Methods](#staticpropertiesmethods)
-      3. [Abstract Classes](#abstractclasses)
-      4. [Private Constructors & Singletons **(MVP)**](#privateconstructorsingletons)
+      1. [Private Members](#privatemembers)
+      2. [Class Inheritance](#classinheritance)
+      3. [Getters & Setters](#getterssetters)
+      4. [Static Properties & Methods](#staticpropertiesmethods)
+      5. [Abstract Classes](#abstractclasses)
+      6. [Private Constructors & Singletons **(MVP)**](#privateconstructorsingletons)
 5. [Modules](#modules)
       1. [Export](#export)
       2. [Default Exports](#defaultexports)
@@ -422,6 +424,7 @@ Just like arrays, the destructured object value pairs will keep their previously
 ---
 
 ## Classes <a name="classes"></a>
+
 > Traditional JavaScript uses functions and prototype-based inheritance to build up reusable components, but this may feel a bit awkward to programmers more comfortable with an object-oriented approach, where classes inherit functionality and objects are built from these classes. In TypeScript, we allow developers to use these techniques now, and compile them down to JavaScript that works across all major browsers and platforms, without having to wait for the next version of JavaScript.
 
 TypeScript offers `public`, `private`, and protected modifiers to every class member variable. Unlike `C#` which requires that each member be explicitly labeled `public`, In TypeScript, each member is `public` by default.
@@ -454,7 +457,9 @@ TypeScript offers `public`, `private`, and protected modifiers to every class me
   // person.setType('Cool guy'); // Not possible, since setType is a private member of Person.
 ```
 
-When a member is marked `private`, it cannot be accessed from outside of its containing class. **However, should a class `X` inherit properties from `Person`, class `A` will be able to access all private properties from `Person` (e.g. `type and setType`) due to being inside (or having access to) the protected scope**. Here's an example;
+## Private Members <a name="privatemembers"></a>
+
+When a member is marked `private`, it cannot be accessed from outside of its containing class. **However, should a class `X` inherit properties from `Person`, class `A` will be able to access all private properties from `Person` (e.g. `type and setType`) due to being inside (or having access to) the protected scope**. More on what class inheritance is all about just below, but here's an example;
 
 ```ts
   class Type {
@@ -506,7 +511,7 @@ Links:
   - [Suggestion: Final keyword for classes and methods](https://github.com/Microsoft/TypeScript/issues/9264)
   - [Support final classes (non-subclassable)](https://github.com/Microsoft/TypeScript/issues/8306)
 
-```
+## Class Inheritance <a name="classinheritance"></a>
 
 > TypeScript is a structural type system. When we compare two different types, regardless of where they came from, if the types of all members are compatible, then we say the types themselves are compatible.
 
