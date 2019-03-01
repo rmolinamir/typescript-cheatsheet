@@ -1804,3 +1804,8 @@ Contributions are always welcome! Just like before, submit a PR and let me know 
 
 - [u/rmolinamir](https://www.reddit.com/user/rmolinamir)
 - [rmolinamir@gmail.com](mailto:rmolinamir@gmail.com)
+
+Here's a small list of awesome people that have contributed in some way or another, thank you guys!
+
+  - [KevinKelbie](https://www.reddit.com/user/KevinKelbie)
+  - [Ical89](https://www.reddit.com/user/Ical89)
