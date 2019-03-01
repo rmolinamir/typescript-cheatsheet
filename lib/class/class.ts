@@ -1,8 +1,17 @@
-class Person {
+class Type {
   private type: string | null = null;
+
+  setType = (type: string) => {
+    this.type = type;
+    console.log(this.type);
+  } 
+}
+
+class Person extends Type {
   protected age: number = 23;
 
   constructor(public name: string, public userName: string, private email: string) {
+    super()
     this.name = name;
     this.userName = userName;
     this.email = email;
@@ -12,15 +21,25 @@ class Person {
     console.log(this.age);
     this.setType('Young guy');
   }
-
-  private setType = (type: string) => {
-    this.type = type;
-    console.log(this.type);
-  } 
 }
 
-const person = new Person('Francisco', 'rmolinamir', 'example@email.com');
-console.log(person, person.name, person.userName);
+const person = new Person('Rob', 'rm', 'email');
+
+person.setType('Cool guy'); // Prints: Cool guy
+
+console.log(person); // Prints:
+/**
+* Person
+* 
+* age: 23 
+* email: "email" 
+* name: "Rob" 
+* printAge: ƒ () 
+* setType: ƒ (type) 
+* type: "Cool guy" 
+* userName: "rm"
+* 
+*/
 
 person.printAge();
 // person.setType('Cool guy'); // Not possible
