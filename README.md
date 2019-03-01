@@ -123,7 +123,7 @@ As TypeScript code can be compiled to ES5, it includes all of the native JavaScr
 > TypeScript, like JavaScript, allows you to work with arrays of values. Array types can be written in one of two ways. In the first, you use the type of the elements followed by [] to denote an array of that element type:
 
 ```ts
-  const hobbies: string['Programming', 'Cooking'] = true;
+  const hobbies: string[] = ['Programming', 'Cooking'];
 ```
 
 If no types are declared, TypeScript will automatically assign a type depending on the types of the Array values.
@@ -131,6 +131,8 @@ If no types are declared, TypeScript will automatically assign a type depending 
 ```ts
   const numbers = [1, 3.22, 6, -1] // This variable will automatically be assigned a number[] array type.
 ```
+
+**Note that declaring types is encouraged**.
 
 ### Tuples <a name="tuples"></a>
 
@@ -446,14 +448,64 @@ TypeScript offers `public`, `private`, and protected modifiers to every class me
       console.log(this.type);
     } 
   }
-```
 
-When a member is marked `private`, it cannot be accessed from outside of its containing class.
-
-```ts
   const person = new Person('Francisco', 'rmolinamir', 'example@email.com');
   person.printAge(); // Prints: 23
   // person.setType('Cool guy'); // Not possible, since setType is a private member of Person.
+```
+
+When a member is marked `private`, it cannot be accessed from outside of its containing class. **However, should a class `X` inherit properties from `Person`, class `A` will be able to access all private properties from `Person` (e.g. `type and setType`) due to being inside (or having access to) the protected scope**. Here's an example;
+
+```ts
+  class Type {
+      private type: string | null = null;
+
+      setType = (type: string) => {
+        this.type = type;
+        console.log(this.type);
+      } 
+  }
+
+  class Person extends Type {
+      protected age: number = 23;
+
+      constructor(public name: string, public userName: string, private email: string) {
+        super()
+        this.name = name;
+        this.userName = userName;
+        this.email = email;
+      }
+
+      public printAge = () => {
+        console.log(this.age);
+        this.setType('Young guy');
+      }
+  }
+
+  const person = new Person('Rob', 'rm', 'email');
+
+  person.setType('Cool guy'); // Prints: Cool guy
+
+  console.log(person); // Prints:
+  /**
+   * Person
+   * 
+   * age: 23 
+   * email: "email" 
+   * name: "Rob" 
+   * printAge: ƒ () 
+   * setType: ƒ (type) 
+   * type: "Cool guy" 
+   * userName: "rm"
+   * /
+```
+
+If you want to prevent some properties or classes for being inherited, there is currently a proposal for the `final` keyword to be added.
+
+Links:
+  - [Suggestion: Final keyword for classes and methods](https://github.com/Microsoft/TypeScript/issues/9264)
+  - [Support final classes (non-subclassable)](https://github.com/Microsoft/TypeScript/issues/8306)
+
 ```
 
 > TypeScript is a structural type system. When we compare two different types, regardless of where they came from, if the types of all members are compatible, then we say the types themselves are compatible.
