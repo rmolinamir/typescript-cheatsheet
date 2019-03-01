@@ -1,3 +1,4 @@
+// Private members and class inheritance
 class Type {
   private type: string | null = null;
 
@@ -24,7 +25,6 @@ class Person extends Type {
 }
 
 const person = new Person('Rob', 'rm', 'email');
-
 person.setType('Cool guy'); // Prints: Cool guy
 
 console.log(person); // Prints:
