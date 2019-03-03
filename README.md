@@ -706,9 +706,11 @@ Think of `abstract` methods as methods that **won't** be passed down to the inhe
 
 [⬆️ Back to top](#table-of-contents)<br>
 
+<a id="#private-constructors-singletons"></a>
+
 ## Private Constructors & Singletons
 
-**My absolute favorite TypeScript feature.** At first glance you may realize that private constructors sound strange, you might ask yourself, what's the point of making the constructor method private, resulting in the programmer not being able to call the new method, which then makes creating new instances of the class impossible? **Quite the contrary.** 
+**My absolute favorite TypeScript feature.** At first glance you may realize that private constructors sound strange, you might ask yourself, what's the point of making the constructor method private, resulting in the programmer not being able to call the new method, which then makes creating new instances of the class impossible? **Quite the contrary.**
 
 As the name of this section implies, a singleton is class that can only be instantiated **once**, or in other words, a class that can only have **one** object, single(ton).
 
