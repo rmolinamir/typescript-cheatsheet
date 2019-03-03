@@ -706,7 +706,7 @@ Think of `abstract` methods as methods that **won't** be passed down to the inhe
 
 [⬆️ Back to top](#table-of-contents)<br>
 
-<a id="#private-constructors-singletons"></a>
+<a id="private-constructors-singletons"></a>
 
 ## Private Constructors & Singletons
 
