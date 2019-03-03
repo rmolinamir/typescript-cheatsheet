@@ -78,6 +78,12 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
       8. [Parameter Decorator](#parameter-decorator)
 11. [Webpack Workflow (v^4.X)](#webpack-workflow)
 12. [TypeScript with React.js](#typescript-with-reactjs)
+      1. [TypeScript while using `create-react-app`](#typescript-while-using-create-react-app)
+      2. [Setting up general React prop types](#setting-up-prop-types)
+          - [References (React.createRef() or useRef API)](#reference-prop-types)
+          - [CSS Properties and Classes Prop Types](#css-prop-types)
+          - [React Children](#children-prop-types)
+          - [General Prop Types (e.g. `className`, `style`, HTML 5 props, etc.)](#general-prop-types)
 13. [Feedback](#feedback)
 14. [Contribute](#contribute)
 
@@ -1871,7 +1877,11 @@ This will make sure the compiler can parse TypeScript down to ES5.
 
 [Here is the official documentation about using TypeScript along with React.js](https://www.typescriptlang.org/docs/handbook/react-&-webpack.html).
 
-In this section though, I'll focus on how to use TypeScript while using `create-react-app`.
+In this section though, I'll focus on how to use TypeScript while using `create-react-app`, and how to set general Prop types like `className`, `ref`, `style`, among others.
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### TypeScript while using `create-react-app`
 
 1. Create the React.js application by running `npx create-react-app project-name --scripts-version=react-scripts-ts`.
 
@@ -1969,6 +1979,230 @@ It is also possible to modify the `tsconfig.json` or the `tslint.json` to handle
 ```
 
 TypeScript by default doesn't like when lambda functions are used and the IDE will hightlight them as an error. To disable this, add the following rule into your `tslint.json` file: `"jsx-no-lambda": false`.
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="setting-up-prop-types"></a>
+
+## Setting up general React prop types
+
+Like shown above, prop types are very encouraged in React.js. Some prop types however, may not be as obvious as others, so here's a small list of the most common prop types you might end up defining while programming your application:
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="reference-prop-types"></a>
+
+### References (`React.createRef()` or `useRef` API)
+
+Passing down references is a bit tricky, because it **depends on which HTML element type you are referring to**.
+
+React provides the reference objects types out of the box, imported from the **React** default export, from the `react` package (or as a named export as well). The name of the object type is `RefObject`, and it is essentially a [generic interface](#generic-types). Here's the definition:
+
+```ts
+interface React.RefObject<T>
+```
+
+As I said earlier, the **RefObject** must be accompanied by a **generic type declaration** (remember the angle brackets typing in the Generics section? e.g. `<T>`), that specifies **which type of HTML element tag the reference belongs to**.
+
+The methodology is the same for every HTML element, but the generic type is respective to which HTML element we are referencing. Here's an example on how to apply the prop type to an SVG and to a button:
+
+***SVG Element:***
+
+```tsx
+  interface ISVGProps {
+    reference?: React.RefObject<SVGSVGElement>
+    ...
+  }
+
+  const SVG = (props: ISVGProps) => {
+    return (
+      <svg
+        ref={props.reference}
+        className={classes.Triangle}
+        {...props} />
+        <path d='M0,0 10,10 20,0' />
+      </svg>
+    )
+  }
+
+  // ...
+
+  <SVG reference={myReference} />
+```
+
+***Button Element:***
+
+```tsx
+  interface IButtonProps {
+    reference?: React.RefObject<HTMLButtonElement>
+  }
+
+  const button = (props: IButtonProps) => {
+    return (
+      <button ref={props.reference} />
+    )
+  }
+
+  // ...
+
+  <Button reference={props.reference} />
+```
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="children-prop-types"></a>
+
+### React Children
+
+Declaring the children prop types might be a bit confusing as well. The children could be a JSX element, a string, numbers, etc. Fortunately and just like with references, the **React default export object** includes the children prop type declaration. It's called **`ReactNode`**. The `ReactNode` is [a type alias](#alias), defined as:
+
+```ts
+type React.ReactNode = string | number | boolean | {} | React.ReactElement<any, string | ((props: any) => React.ReactElement<any, string | ... | (new (props: any) => React.Component<any, any, any>)> | null) | (new (props: any) => React.Component<...>)> | React.ReactNodeArray | React.ReactPortal | null | undefined
+```
+
+Pretty long, right? Good thing it exists. Here is an example of how we can use it, along with the reference prop type:
+
+```tsx
+  interface IButtonProps {
+    reference?: React.RefObject<HTMLButtonElement>
+    children?: React.ReactNode
+  }
+
+  const button = (props: IButtonProps) => {
+    return (
+      <button ref={props.reference}>{props.children}</button>
+    )
+  }
+
+  // ...
+
+  <Button reference={props.reference}>
+    {props.children}
+  </Button>
+```
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="css-prop-types"></a>
+
+### CSS Properties and Classes Prop Types
+
+Now, let's say we want to pass CSS classes and CSS style properties as React props down to our button component. We know that CSS classes, classNames in react, are of type `string`. However, CSS style properties are made of an entirely different type definition.
+
+The type definition can be imported from the **React default export object** just like the previous type declarations. It's called **`CSSProperties`**, and it is defined as:
+
+```ts
+  interface CSSProperties extends CSS.Properties<string | number>
+```
+
+Here's how we can pass CSS classes and style properties down to our component:
+
+```tsx
+  interface IButtonProps {
+    reference?: React.RefObject<HTMLButtonElement>
+    children?: React.ReactNode
+    // CSS
+    style?: React.CSSProperties
+    className?: string
+  }
+
+  const button = (props: IButtonProps) => {
+    return (
+      <button
+        style={props.style}
+        className={props.className}
+        ref={props.reference}>
+        {props.children}
+      </button>
+    )
+  }
+
+  // ...
+
+  <Button
+      className={classes.Button}
+      style={{ backgroundColor: 'gold', color: '#FFF' }}
+      reference={props.reference}>
+    {props.children}
+  </Button>
+```
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="general-prop-types"></a>
+
+### General Prop Types (e.g. HTML 5 props, event listeners etc.)
+
+Let's finish our button. We'll now create an interface declaring most of the possible HTML-5 properties a button can accept, such as mouse in and out and click event listeners, CSS classes, CSS styles, form properties (form, formaction, formenctype, etc.), value, among others.
+
+***Button.tsx***
+
+```tsx
+  interface IButtonProps {
+    reference?: React.RefObject<HTMLButtonElement>
+    children?: React.ReactNode
+    data: IButtonData
+  }
+
+  interface IButtonData {
+    // HTML Props
+    type?: string
+    name?: string
+    value?: string | number | string[] | undefined
+    onClick?: ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void) | undefined
+    onMouseEnter?: ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void)
+    onMouseLeave?: ((event: React.MouseEvent<HTMLButtonElement, MouseEvent>) => void)
+    tabIndex?: number | undefined
+    disabled?: boolean
+    // HTML 5 Props
+    autoFocus?: boolean
+    form?: string
+    formAction?: string
+    formEncType?: string
+    formMethod?: string
+    formNoValidate?: boolean
+    formTarget?: string
+    // CSS
+    style?: React.CSSProperties
+    className?: string
+  }
+
+  const data: IButtonData = {...props.data}
+
+  export const button = (props: IButtonProps) => {
+    return (
+      <button ref={props.reference} {...data}>
+        {props.children}
+      </button>
+    )
+  }
+```
+
+Let's now call our button component inside an **App.js** file then pass some props:
+
+***App.js***
+
+```js
+  /// ...
+
+  <Button reference={myButton}
+    data={
+      type: 'submit',
+      className: classes.Button,
+      style: { backgroundColor: 'gold', color: '#FFF' },
+      tabIndex: -1,
+      autoFocus,
+      formEncType: 'multipart/form-data',
+      onClick: onSubmitHandler
+      // ...
+    }>
+    {props.children}
+  </Button>
+```
+
+For more information about button HTML properties, [give this a read](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button).
+
+The methodology is essentially the same for other components. When in doubt about other HTML properties for any kind of element, you can always consult the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/).
 
 [⬆️ Back to top](#table-of-contents)<br>
 
