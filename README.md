@@ -2222,6 +2222,8 @@ Setting up a React reference is similar to how we pass down references as props.
 
 Let's start with the `useRef` API first:
 
+<a id="typescript-useref"></a>
+
 ### TypeScript & useRef
 
 The general idea is to define the reference with a generic HTML type while initializing them as `null`. This is to let TypeScript know what kind of variable will be stored. Here's an example using an input element:
@@ -2238,6 +2240,8 @@ The general idea is to define the reference with a generic HTML type while initi
 ```
 
 [⬆️ Back to top](#table-of-contents)<br>
+
+<a id="typescript-reactcreateref"></a>
 
 ### TypeScript & React.createRef
 
