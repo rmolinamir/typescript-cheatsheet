@@ -84,6 +84,10 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [CSS Properties and Classes Prop Types](#css-prop-types)
           - [React Children](#children-prop-types)
           - [General Prop Types (e.g. `className`, `style`, HTML 5 props, etc.)](#general-prop-types)
+      3. [Setting up React References (React.createRef() or useRef API)](#setting-up-react-references)
+          - [TypeScript & useRef](#typescript-useref)
+          - [TypeScript & React.createRef](#typescript-reactcreateref)
+      4. [Setting up Event Handlers](#setting-up-event-references)
 13. [Feedback](#feedback)
 14. [Contribute](#contribute)
 
@@ -2205,6 +2209,111 @@ Let's now call our button component inside an **App.js** file then pass some pro
 For more information about button HTML properties, [give this a read](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/button).
 
 The methodology is essentially the same for other components. When in doubt about other HTML properties for any kind of element, you can always consult the [MDN docs](https://developer.mozilla.org/en-US/docs/Web/).
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="setting-up-react-references"></a>
+
+## Setting up React References (React.createRef() or useRef API)
+
+Setting up a React reference is similar to how we pass down references as props. Let's set up the reference using the `useRef` hook and the old `React.createRef()`.
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+Let's start with the `useRef` API first:
+
+### TypeScript & useRef
+
+The general idea is to define the reference with a generic HTML type while initializing them as `null`. This is to let TypeScript know what kind of variable will be stored. Here's an example using an input element:
+
+```tsx
+  const input = () => {
+    // Initialize the reference as null while letting TypeScript know it's an input element.
+    const myInput = useRef<HTMLInputElement>(null)
+
+    return (
+      <input ref={myInput} type='text' />
+    );
+  }
+```
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### TypeScript & React.createRef
+
+Similarly to how we just created a reference using the `useRef` API, let's now use the `React.createRef` API to set up a reference by initializing it as null and declaring the HTML type:
+
+```tsx
+  /// ...
+
+  class Input extends Component {
+    constructor() {
+      super()
+      // Initialize the reference as null while letting TypeScript know it's an input element.
+      this.myInput = React.createRef<HTMLInputElement>(null)
+    }
+
+    render() {
+      return (
+        <input ref={this.myInput} type='text' />
+      )
+    }
+  }
+```
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="setting-up-event-references"></a>
+
+## Setting up Event Handlers
+
+> There are many types of events, some of which use other interfaces based on the main Event interface. Event itself contains the properties and methods which are common to all events.
+
+There are many types of events. Because of this, when accessing an event, we must let TypeScript know what kind of event we are referring to. [Here is a list of all the possible events according to the official MDN docs](https://developer.mozilla.org/en-US/docs/Web/API/Event#Introduction).
+
+Let's create two event handlers, a `MouseEvent` handler that will prevent the default event, trigger an alert displaying our value, then reset our input's value on upon clicking a button, and finally, an `InputEvent` handler that will listen to our input element value changes. Let's expand our previous example:
+
+```tsx
+  /// ...
+  
+  const input = () => {
+    const [inputValue, setInputValue] = React.useState('')
+
+    // Initialize the reference as null while letting TypeScript know it's an input element.
+    const myInput = useRef<HTMLInputElement>(null)
+
+    /**
+     * Our InputEvent listener.
+     */
+    const onChangeHandler = (event: React.InputEvent) => {
+      const value = event.target.value
+      console.log(myInput.current.value)
+      setInputValue(value)
+    }
+
+    /**
+     * Our MouseEvent listener.
+     */
+    const onClickHandler = (event: React.MouseEvent) => {
+      event.preventDefault()
+      alert(inputValue)
+      setInputValue('')
+    }
+
+    return (
+      <form>
+        <input
+          ref={myInput}
+          value={inputValue}
+          onChange={onChangeHandler}
+          type='text' />
+        <button onClick={onClickHandler}>
+          Click me to reset the input field!
+        </button>
+      </form>
+    );
+  }
+```
 
 [⬆️ Back to top](#table-of-contents)<br>
 
