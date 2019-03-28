@@ -61,6 +61,9 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [Implementing an `interface` to a `Class`](#implementing-interface-to-class)
           - [Implementing an `interface` to a `function`](#implementing-interface-to-function)
       2. [Extends Keyword (Interface Inheritance)](#extends-keyword-interface-inheritance)
+      3. [`Omit` type when extending an interface](#omit-type-interfaces)
+      4. [Omitting specific properties when extending an interface](#exclude-interface-properties)
+      5. [Type checking for interfaces](#type-chkecking-interfaces)
 9. [Generics](#generators)
       1. [Simple Generics](#simple-generics)
       2. [Better Generics](#better-generics)
@@ -1376,6 +1379,153 @@ Just like how a `class` may extend its properties by inheriting `class` or `abst
 ```
 
 As you can see, the `oldPerson` will be restricted to the `AgePerson` type structure, which inherits all of `NamedPerson` properties.
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="omit-type-interfaces"></a>
+
+## `Omit` type when extending an interface
+
+Sometimes, we might want to omit certain types from an extended interface. One of the most common reasons is to **overwrite** a property. Let's first define the `Omit` special type that we will be using to exclude properties, and then we'll do a scenario exercise:
+
+```ts
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>
+```
+
+The angle brackets and the content inside them are part of what is known as `Generics`. They are a way to declare, basically, generic typing similarly to how an array of strings may be declared as `string[]`. More information about Generics on its section down below after the Interfaces!
+
+Here's a breakdown of how the `Omit` type works. It's essentially doing the opposite of what the special `Pick` utility type does. In TypeScript 2.1, the `Pick` **utility** type was introduced, `Pick` allows us to **only pick certain properties of an object, to create a new object**, here's an example as shown in the [TypeScript official documentation](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-2-1.html):
+
+```ts
+// From T pick a set of properties K
+declare function pick<T, K extends keyof T>(obj: T, ...keys: K[]): Pick<T, K>;
+
+const nameAndAgeOnly = pick(person, "name", "age");  // { name: string, age: number }
+```
+
+In TypeScript 2.8, the `Exclude` type was added to the standard library, which allows an omission type to be written as shown directly below:
+
+```ts
+type T00 = Exclude<"a" | "b" | "c" | "d", "a" | "c" | "f">;  // "b" | "d"
+```
+
+You can read the above as "exclude `"a"`, `"c"`, and `"f"` from `("a" | "b" | "c" | "d")`, which results in `"b"` or `"d"`.
+
+Having said this, **`Omit` picks every property of an object `T`, excluding the specified `K` properties (or keys) of `T`**.
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="exclude-interface-properties"></a>
+
+## Omitting specific properties when extending an interface
+
+Let's say we are creating a React component that is based on a common HTML `<input>` element. We want our component to receive all of the HTML attributes as props that a regular `<input>` element may receive, but we want to overwrite some to improve or enhance functionalities! So, for this example let's say that we want to overwrite the `onChange` attribute.
+
+To overwrite the `onChange` attribute, we must omit it from the extended base interface, then declare it on the props interface. Our new `onChange` callback will return a variable of type `value` defined below, instead of an event. Here's an example:
+
+```ts
+type Omit<T, K extends keyof T> = Pick<T, Exclude<keyof T, K>>;
+
+type value = string | number | string[];
+
+/**
+ * Base interface.
+ */
+type InputElementAttributes = React.DetailedHTMLProps<React.InputHTMLAttributes<HTMLInputElement>, HTMLInputElement>;
+
+interface IInputProps extends IInputState, Omit<InputElementAttributes, 'onChange'> {
+  onChange: (value?: value) => void
+}
+
+```
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="type-chkecking-interfaces"></a>
+
+## Type checking for interfaces
+
+**Hard** checking for interface is not yet available, but there are ways to achieve the same results. I will explain two commonly used methods to check for interfaces. These methods are:
+
+1. Use **type-guards** to check for instances of specifc objects.
+
+[The TypeScript official documentation defines a **type guard** as](https://www.typescriptlang.org/docs/handbook/advanced-types.html) some expression that performs a runtime check that guarantees the type in some scope. To define a type guard, we simply need to define a function whose return type is a type predicate:
+
+```ts
+function isFish(pet: Fish | Bird): pet is Fish {
+    return (<Fish>pet).swim !== undefined;
+}
+```
+
+Let's go back to our React scenario. Let's say our input values are programmatically managed, and could either be of type `value`, or objects with an `IValue` interface depening on some props and prior setup.
+
+Let's assume we have an `onChangeHandler` that listens for any changes made to the input value and returns a data of ***type* value**. But the problem is that the **value *variable*** might not always be of ***type* value**, so we need to check if it's an object of **"type" IValue**. Let's define the typings and `onChangeHandler`:
+
+```ts
+type value = string | number | string[];
+
+interface IValue {
+  value: value;
+  [propName: string]: any;
+}
+
+/**
+ * `ISelectValue` interface type checker.
+ */
+const instanceOfIValue = (object: any): object is ISelectValue => {
+  if (object && object.inputData) {
+    return 'inputData' in object; // true
+  }
+  return false;
+}
+
+const onChangeHandler = (inputData: value | IValue): value => {
+  // Checking for IValue object.
+  if (instanceOfIValue(inputData)) {
+    return inputData.value;
+  }
+  // Otherwise, simply return the inputData which will be of type value.
+  return inputData;
+}
+```
+
+The above code snippet might seem overkill, but keep in mind that `instanceOfIValue` can be used in multiple places, and it's scallable to a certain extent. Further properties might be added, and guarded for. If there are too many properties to guard though, using **distriminators** to check for instances might be better.
+
+2. Use **discriminators** to check for instances of specific objects.
+
+If you find yourself needing to check for many object properties to determine if an object matches your interface, you can use a **discriminator**. Here is a basic example, based on the example above except now we add a new property to `IValue` declared `displayValue`, and `value` might be `undefined`:
+
+```ts
+type value = string | number | string[];
+
+interface IValue {
+  value?: value;
+  displayValue: string;
+  discriminator: 'IValue';
+  [propName: string]: any;
+}
+
+/**
+ * `ISelectValue` interface type checker.
+ */
+const instanceOfIValue = (object: any): object is ISelectValue => {
+  if (object && object.discriminator) {
+    return object.discriminator === 'IValue';
+  }
+  return false;
+}
+
+const onChangeHandler = (inputData: value | IValue): value => {
+  // Checking for IValue object.
+  if (instanceOfIValue(inputData)) {
+    return inputData.value || inputData.displayValue;
+  }
+  // Otherwise, simply return the inputData which will be of type value.
+  return inputData;
+}
+```
+
+By using a **discriminator**, we don't have to check if the `value` or `displayValue` properties exist, instead we check for a `discriminator` property which will let us know if the object is of "type" `IValue`.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
