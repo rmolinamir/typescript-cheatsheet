@@ -1238,12 +1238,12 @@ We can think of **interfaces** as a way to assign types to the structure of a va
   simpleGreet(simplePerson); // Prints: "Hello Robert!"
 ```
 
-You might think this would make interfaces not scallable because of very restrictive properties, but fortunately **properties can be optional**. To define an interface property as optional, we must place a `?` character in front of the key name of the property when defining it. Here's an example:
+You might think this would make interfaces not scallable because of very restrictive properties, but fortunately **properties can be optional**. To define an interface property as optional, we must place a `?` character after the key name of the property when defining it. Here's an example:
 
 ```ts
   interface SimplePerson {
     firstName: string;
-    lastName?: number;
+    lastName?: string;
     age?: number;
   }
 
