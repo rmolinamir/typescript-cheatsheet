@@ -1357,7 +1357,7 @@ One such example is an object that acts as both a function and an object, with a
 
 ### Extends Keyword (Interface Inheritance)
 
-Just like how a `class` may extend its properties by inheriting `class` or `abstract class` properties, **interfaces may also inherit properties to extend its own properties**. It's done exactly as you'd expect, here's an example using the `NamedPerson` interface shown in the examples above to extend a new interface defined as `AgedPerson`:
+Just like how a `class` may extend its properties by inheriting `class` or `abstract class` properties, **interfaces may also inherit properties to extend its own properties**. It's done exactly as you'd expect, here's a very basic example using the `NamedPerson` interface shown in the examples above to extend a new interface defined as `AgedPerson`:
 
 ```ts
   interface NamedPerson {
@@ -1375,12 +1375,77 @@ Just like how a `class` may extend its properties by inheriting `class` or `abst
     age: 74,
     firstName: 'An Old Guy',
     greet(lastName: string) {
-      console.log(`Hello Sr. ${lastName}.`);
+      console.log(`Hello Sr. ${lastName}.`); // Would print: "Hello Sr. An Old Guy"
     }
   }
 ```
 
-As you can see, the `oldPerson` will be restricted to the `AgePerson` type structure, which inherits all of `NamedPerson` properties.
+As you can see, the `oldPerson` will be restricted to the `AgedPerson` type structure, which inherits all of `NamedPerson` properties.
+
+Now, instead of overwriting a property that could be `undefined` previously, this time let's try to add new properties on top of `AgedPerson` by extending it yet again to a new interface:
+
+```ts
+  interface NamedPerson {
+    firstName: string;
+    age?: number;
+    [propName: string]: any;
+    greet(lastName: string): void;
+  }
+
+  interface AgedPerson extends NamedPerson {
+    age: number;
+  }
+
+  interface AthleticPerson extends AgedPerson {
+    isAthlete: true
+    isSuccessful?: boolean
+  }
+
+  const athleticPerson: AthleticPerson = {
+    age: 29,
+    firstName: 'An Old Guy',
+    isAthlete: true,
+    greet(lastName: string) {
+      console.log(`Hello Sr. ${lastName}.`); // Would print: "Hello Sr. An Old Guy"
+    }
+  }
+```
+
+Notice, how the `AthleticPerson` interface has the properties of not just `AgedPerson`, but of `NamedPerson`, plus of course its own properties. This is a process that can be repeated over, and over, so long as the interface structures are compatible.
+
+The example above can also be written as:
+
+```ts
+  interface NamedPerson {
+    firstName: string;
+    [propName: string]: any;
+    greet(lastName: string): void;
+  }
+
+  interface AgedPerson {
+    age: number;
+  }
+
+  interface AthleticPerson extends AgedPerson, NamedPerson {
+    isAthlete: true
+    isSuccessful?: boolean
+  }
+
+  const athleticPerson: AthleticPerson = {
+    age: 29,
+    firstName: 'An Old Guy',
+    isAthlete: true,
+    greet(lastName: string) {
+      console.log(`Hello Sr. ${lastName}.`); // Would print: "Hello Sr. An Old Guy"
+    }
+  }
+```
+
+Now how in this example, we are extending multiple interfaces into `AthleticPerson`. Note however, that by doing it this way **all of the named properties must be identical if repeated in two or more interfaces**, unlike before, the type `age?` had to be removed from `NamedPerson` because their types were not equal to each other.
+
+It is possible though, to omit (by either picking or excluding) properties, more on this directly below!
+
+``
 
 [⬆️ Back to top](#table-of-contents)<br>
 
