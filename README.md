@@ -647,7 +647,7 @@ To `set` *species*, we would do an expression such as `plant.species = 'AB';`, a
 
 ## Static Properties & Methods
 
-Static properties and methods are class members that can be accessed from an outer scope scope of the `class`, **and** without having to instantiate the class either. Here's an example:
+Static properties and methods are class members that can be accessed from an outer scope of the `class`, **and** without having to instantiate the class either. Here's an example:
 
 ```ts
   class Helpers {
