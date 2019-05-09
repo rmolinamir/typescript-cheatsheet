@@ -875,7 +875,7 @@ TypeScript v^3.0
 
 Sometimes we might be in a situation where we only want to load certain parts of our application dynamically. This may be to reduce the initial load time or to improve performance.
 
-This is commonly known as dynamic imports. The idea is to use the following pattern: `import id = require('...')` which will give us access to the types exxposed by the module thanks to the compiler. The module will be loaded dynamically, which means it can be preceded by something like an `if` statement. 
+This is commonly known as dynamic imports. The idea is to use the following pattern: `import id = require('...')` which will give us access to the types exposed by the module thanks to the compiler. The module will be loaded dynamically, which means it can be preceded by something like an `if` statement. 
 
 > **This leverages the reference-elision optimization so that the module is only loaded when needed**. For this pattern to work, it’s important that the symbol defined via an import is only used in type positions (i.e. never in a position that would be emitted into the JavaScript).
 > **To maintain type safety, we can use the typeof keyword. The typeof keyword, when used in a type position, produces the type of a value, in this case the type of the module**.
