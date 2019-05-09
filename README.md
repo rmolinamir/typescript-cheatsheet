@@ -753,7 +753,9 @@ If it already exists, we can always return the previously created instance, here
   const anotherWay = OnlyOne.getInstace(); // Works too.
 ```
 
-In the above example, the variables `rightWay` and `anotherWay` would be pointers (think `C++`) to the same instance of `OnlyOne`. As you can see, to initiate `OnlyOne` we have to call `getInstance` instead of running the constructor from an outter scope of the `OnlyOne` class. Afterwards, it is possible to call any of the other public methods of the class (e.g. managing global toast messages inside an application, with a single instance managing every message).
+In the above example, the variables `rightWay` and `anotherWay` would be pointers (think `C++`) to the same instance of `OnlyOne`. As you can see, to initiate `OnlyOne` we have to call `getInstance` instead of running the constructor from an outter scope of the `OnlyOne` class.
+
+Afterwards, it is possible to call any of the other public methods of the class. You'd use this for things like managing global toast messages inside an application, with a single class instance managing every message. Another common use case is when front-end code (e.g. React/Vue/Angular) speaks to a backend such as Amazon's AWS or Google's Firebase platforms. In that case you'd use the AWS or Firebase SDK inside the frontent to create a singleton class instance inside the client device. That singleton class instance would provide the frontend code with all kinds of utility methods, such as, for example, backend specific methods to store data from the frontend into some backend storage e.g. Firebase's firestore database or Amazon's S3 storage bucket.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
