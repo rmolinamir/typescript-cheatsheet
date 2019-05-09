@@ -1273,9 +1273,9 @@ We may also define the interface with *index signatures*, think of them like dyn
 
 Notice how we can add very different properties now? This is a way of telling the compiler the following when declaring and defining `person`:
 
-1. `person` **must** have a *`firstName`* property type `string`.
-2. `person` **may** have an *`age`* property. It **must** be of type `string` if it exists, anything else will result in an error when compiling.
-3. `person` **may** then have any type of properties because of the **index signature**: `[propName: string]: any;`.
+1. `person` **must** have a *`firstName`* property of type `string`.
+2. `person` **may** have an *`age`* property. It **must** be of type `number` if it exists, anything else will result in an error when compiling.
+3. `person` **may** then have any number of properties of type `string`, each with a value of type `any`, all made possible by the **index signature** of: `[propName: string]: any;`.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
