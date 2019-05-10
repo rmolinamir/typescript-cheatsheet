@@ -26,10 +26,11 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [Complex Objects](#complex-objects)
       10. [Alias](#alias)
       11. [Union](#union)
-      12. [Check](#check)
-      13. [Never](#never)
-      14. [Nullable](#nullable)
-      15. [Type Assertions](#type-assertions)
+      12. [Intersection](#intersection)
+      13. [Check](#check)
+      14. [Never](#never)
+      15. [Nullable](#nullable)
+      16. [Type Assertions](#type-assertions)
 3. [ES6](#es6)
       1. [Template Literals](#template-literals)
       2. [Arrow Functions](#arrow-functions)
@@ -343,6 +344,62 @@ Variables are not restricted to only one assigned type. This is where union type
   myRealRealAge = '24';
   // myRealRealAge = true // Not possible since myRealRealAge only accepts a number or a string.
 ```
+
+### Intersection
+
+Intersection types are similar to union types (and similar to the `extend` keyword pattern, which is explained further down), but arguably less common (yet, at least equally useful). Before we get into what an intersection type is, I must mention that in the [TypeScript official documentation about the intersection types](https://www.typescriptlang.org/docs/handbook/advanced-types.html), they are showcased first and *before* the union types, however in this guide I will mention them *after* the union types because they have a bit of a more abstract definition.
+
+Since it's a rather abstract concept, to give you an idea of what an intersection type is, think of the famous `React.js` package, `react-redux`, and its [`compose` function](https://redux.js.org/api/compose). A [brief look of the code snippet](https://github.com/reduxjs/redux/blob/master/src/compose.js) will show us how all of the `function` arguments of `compose` are *mixed* into one single `function`. This is essentially what the the intersection types do, they *mix* an N number of types to create a new one, so long as they are compatible.
+
+In TypeScript, an intersection type is simply a mix (more commonly referred to as a ***mixin***) between two or more types.
+
+**Note however, that this does not mean that you can freely use intersection types anywhere**. For example, this simple declaration will make the compiler throw an error:
+
+```ts
+let stringAndNumber: string & number = 5;
+```
+
+The reason is because `5` is not assignable to type `string`. And that is because `5` is of type `number`, the types `number` and `string` are structuraly **incompatible**.
+
+Without getting too much into it, the way TypeScript compares types is based on their members. Since at least 1 of the members between the types `string` and `number` clash, the intersection of these types is not possible.
+
+**That** is the limitation of the intersection types. The intersected types *must* be compatible, by this, I mean that **their properties must not overlap each other**. If this condition is met, **the resulting type will have access to all properties**.
+
+Because of the previously mentioned limitation, intersection types are less common than union types, they would be *very* hard to use on variables with "basic" levels of types. Fortunately for us, by using `interfaces` ([explained here](#interfaces)) (and other advanced types), intersection types become ***very*** useful. Let's take a look at a more advanced example (which assumes the reader has at least basic knowledge of interfaces):
+
+```ts
+interface Loggable {
+    log(name: string, age: number): void
+}
+
+interface Person {
+    name: string
+    age: number
+    isStark?: boolean // May be undefined.
+}
+
+type LoggablePerson = Loggable & Person;
+
+const logPerson:(name: string, age: number) => void = (name, age) => {
+    console.log(`I am ${name}, and I am ${age} years old.`)
+}
+
+const jonSnow: LoggablePerson = {
+    name: "Jon Snow",
+    age: 23,
+    log: logPerson
+}
+
+console.log('jonSnow.name ->', jonSnow.name); // Prints: "Jon Snow"
+console.log('jonSnow.age ->', jonSnow.age); // Prints: 23
+console.log('jonSnow.isStark ->', jonSnow.isStark); // Prints: undefined
+console.log(
+    'jonSnow.log(jonSnow.name, jonSnow.age) ->',
+    jonSnow.log(jonSnow.name, jonSnow.age)
+); // Prints: I am Jon Snow, and I am 23 years old.
+```
+
+**NOTE:** If you want to mix **members** (not types) of a `class`, you should use the `extend` keyword instead, [explained here](#extends-keyword-interface-inheritance).
 
 [⬆️ Back to top](#table-of-contents)<br>
 
@@ -2485,9 +2542,21 @@ And thank you very much for taking the time to do so 💖
 
 ---
 
+## Collaborators
+
+This is a (currently not so big) list of all the awesome collaborators of the TypeScript Cheatsheet:
+
+- [*evdama*](https://github.com/evdama) 🥇
+
+Make sure to buy them a beer if you ever meet one of them 😊
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+---
+
 ## Contribute
 
-Contributions are always welcome! Just like before, submit a PR and let me know at:
+Contributions are always welcome! Just like before, submit a PR and/or let me know at if you realize I'm taking too long to reply:
 
 - [u/rmolinamir](https://www.reddit.com/user/rmolinamir)
 - [rmolinamir@gmail.com](mailto:rmolinamir@gmail.com)

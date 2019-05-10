@@ -100,6 +100,37 @@ let complex2: Complex  = {
   }
 };
 
+// interceptor types
+interface Loggable {
+  log(name: string, age: number): void
+}
+
+interface Person {
+  name: string
+  age: number
+  isStark?: boolean // May be undefined.
+}
+
+type LoggablePerson = Loggable & Person;
+
+const logPerson:(name: string, age: number) => void = (name, age) => {
+  console.log(`I am ${name}, and I am ${age} years old.`)
+}
+
+const jonSnow: LoggablePerson = {
+  name: "Jon Snow",
+  age: 23,
+  log: logPerson
+}
+
+console.log('jonSnow.name ->', jonSnow.name); // Prints: "Jon Snow"
+console.log('jonSnow.age ->', jonSnow.age); // Prints: 23
+console.log('jonSnow.isStark ->', jonSnow.isStark); // Prints: undefined
+console.log(
+  'jonSnow.log(jonSnow.name, jonSnow.age) ->',
+  jonSnow.log(jonSnow.name, jonSnow.age)
+); // Prints: I am Jon Snow, and I am 23 years old.
+
 // union types
 let myRealRealAge: number | string = 24;
 myRealRealAge = '24';
