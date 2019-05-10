@@ -93,7 +93,8 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [TypeScript & React.createRef](#typescript-reactcreateref)
       4. [Setting up Event Handlers](#setting-up-event-references)
 13. [Feedback](#feedback)
-14. [Contribute](#contribute)
+14. [Collaborators](#collaborators)
+15. [Contribute](#contribute)
 
 ---
 
