@@ -1632,7 +1632,7 @@ Note how in the example above, we can't access the `length` property of a string
 
 ### Better Generics
 
-While the example above is technically a generic function, let's now improve by making use of a TypeScript it so that we can know what type will be returned from `echo`. Here is an example:
+While the example above is technically a generic function, let's now improve it by making use of TypeScript so that we can know what type will be returned from `echo`. Here is an example:
 
 ```ts
   function betterEcho<T>(data: T) {
