@@ -57,13 +57,17 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
       4. [Wildcard Module Declarations](#wildcard-module-declarations)
       5. [UMD modules](#umd-modules)
 8. [Interfaces](#interfaces)
-      1. [Implements Keyword](#implements-keyword)
+      1. [Optional Properties](#optional-properties)
+      2. [Index Signatures](#index-signatures)
+      3. [Implements Keyword](#implements-keyword)
+          - [References (React.createRef() or useRef API)](#reference-prop-types)
           - [Implementing an `interface` to a `Class`](#implementing-interface-to-class)
           - [Implementing an `interface` to a `function`](#implementing-interface-to-function)
-      2. [Extends Keyword (Interface Inheritance)](#extends-keyword-interface-inheritance)
-      3. [`Omit` type when extending an interface](#omit-type-interfaces)
-      4. [Omitting specific properties when extending an interface](#exclude-interface-properties)
-      5. [Type checking for interfaces](#type-chkecking-interfaces)
+      4. [Extends Keyword (Interface Inheritance)](#extends-keyword-interface-inheritance)
+      5. [`Omit` type when extending an interface](#omit-type-interfaces)
+      6. [Omitting specific properties when extending an interface](#exclude-interface-properties)
+      7. [Type checking for interfaces](#type-chkecking-interfaces)
+      8. [Optional properties](#optional-properties)
 9. [Generics](#generators)
       1. [Simple Generics](#simple-generics)
       2. [Better Generics](#better-generics)
@@ -1238,7 +1242,14 @@ We can think of **interfaces** as a way to assign types to the structure of a va
   simpleGreet(simplePerson); // Prints: "Hello Robert!"
 ```
 
-You might think this would make interfaces not scallable because of very restrictive properties, but fortunately **properties can be optional**. To define an interface property as optional, we must place a `?` character after the key name of the property when defining it. Here's an example:
+You might think this would make interfaces not scallable because of very restrictive properties, but fortunately **properties can be optional**. More on this below!
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### Optional Properties
+
+
+To define an interface property as optional, we must place a `?` character after the key name of the property when defining it (a postfix notation). Here's an example:
 
 ```ts
   interface SimplePerson {
@@ -1251,7 +1262,13 @@ You might think this would make interfaces not scallable because of very restric
   const right: SimplePerson = { firstName: 'Robert', age: 24 };
 ```
 
-We may also define the interface with *index signatures*, think of them like dynamic key value pairs. Here's an example:
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="index-signatures"></a>
+
+### Index Signatures (Dynamic Property Names)
+
+We may also define the interface with *index signatures*, think of them like dynamic key-value pairs. Here's an example:
 
 ```ts
   interface NamedPerson {
@@ -1357,28 +1374,7 @@ One such example is an object that acts as both a function and an object, with a
 
 ### Extends Keyword (Interface Inheritance)
 
-Just like how a `class` may extend its properties by inheriting `class` or `abstract class` properties, **interfaces may also inherit properties to extend its own properties**. It's done exactly as you'd expect, here's a very basic example using the `NamedPerson` interface shown in the examples above to extend a new interface defined as `AgedPerson`:
-
-```ts
-  interface NamedPerson {
-    firstName: string;
-    age?: number;
-    [propName: string]: any;
-    greet(lastName: string): void;
-  }
-
-  interface AgedPerson extends NamedPerson {
-    age: number;
-  }
-
-  const oldPerson: AgedPerson = {
-    age: 74,
-    firstName: 'An Old Guy',
-    greet(lastName: string) {
-      console.log(`Hello Sr. ${lastName}.`); // Would print: "Hello Sr. An Old Guy"
-    }
-  }
-```
+Similar to how a `class` can extend its properties by inheriting `class` or `abstract class` properties, **interfaces may also inherit properties to extend its own properties**. It's done exactly as you'd expect, here's a very basic example using the `NamedPerson` interface shown in the examples above to extend a new interface defined as `AgedPerson`:
 
 As you can see, the `oldPerson` will be restricted to the `AgedPerson` type structure, which inherits all of `NamedPerson` properties.
 
