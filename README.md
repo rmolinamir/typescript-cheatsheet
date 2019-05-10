@@ -93,7 +93,8 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [TypeScript & React.createRef](#typescript-reactcreateref)
       4. [Setting up Event Handlers](#setting-up-event-references)
 13. [Feedback](#feedback)
-14. [Contribute](#contribute)
+14. [Collaborators](#collaborators)
+15. [Contribute](#contribute)
 
 ---
 
@@ -1763,7 +1764,7 @@ Here is a more advanced example where we use **multiple types** when defining th
 
 Now we have **two** types, `T` and `U` and both are constrained, but to different types. The constructor argument `baseValue` is defined as type `T`, and `T` only extends to type `number`, which results in `baseValue` only accepting values of type `number` when calling the constructor.
 
-`U` is a union type. It accepts values of type `number` or `string`, and it's assigned to the `multiplyValue` argument of the constructor.
+`U` is an union type. It accepts values of type `number` or `string`, and it's assigned to the `multiplyValue` argument of the constructor.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
