@@ -1626,7 +1626,7 @@ Our function is now a generic function, it can accept `any` type of argument and
 1. The compiler doesn't know what the **type** of the return value will be.
 2. Because of the above, the IDE won't know what value **type** will be returned from the function, resulting in higher difficulty to access its properties, we would have to be sure beforehand. The program could also crash if an undefined variable is used later on.
 
-Now how in the example above, we can't access the `length` property of a string, because `echo` returns a `number`, but neither the compiler nor the IDE knows this **because we are losing information about said type**. We can fortunately fix this however, by using **better generics**.
+Note how in the example above, we can't access the `length` property of a string, because `echo` returns a `number`, but neither the compiler nor the IDE knows this **because we are losing information about said type**. We can fortunately fix this however, by using **better generics**.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
