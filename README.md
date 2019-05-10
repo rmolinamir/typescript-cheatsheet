@@ -1744,9 +1744,9 @@ Here is a simple example for starters using **`constraints`**. The generic types
   console.log(bothTypes.calculate()); // Prints: 200
 ```
 
-Notice how `T` type is defined. **`T` extends to the `number` type, `or` to the `string` type only**. This means that everything referring to `T` inside the generic class `GenericMath`, can be of type `number` or type `string` (e.g. the constructor arguments), depending on how its set when calling the constructor.
+Notice how the `T` type is defined. **`T` extends to the `number` type, `or` to the `string` type only**. This means that everything referring to `T` inside the generic class `GenericMath`, can be of type `number` or type `string` (e.g. the constructor arguments), depending on how its set when calling the constructor.
 
-Here is a more advanced example where we use **multiple tipes** when defining the generic class types:
+Here is a more advanced example where we use **multiple types** when defining the generic class types:
 
 ```ts
   class MultipleTypesMath<T extends number, U extends number | string> {
@@ -1763,7 +1763,7 @@ Here is a more advanced example where we use **multiple tipes** when defining th
 
 Now we have **two** types, `T` and `U` and both are constrained, but to different types. The constructor argument `baseValue` is defined as type `T`, and `T` only extends to type `number`, which results in `baseValue` only accepting values of type `number` when calling the constructor.
 
-`U` only accepts values of type `number` or `string`, and it's assigned to the `multiplyValue` argument of the constructor.
+`U` is a union type. It accepts values of type `number` or `string`, and it's assigned to the `multiplyValue` argument of the constructor.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
