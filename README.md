@@ -24,6 +24,8 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
       8. [Void Function Type](#void-function-type)
       9. [Objects](#objects)
           - [Complex Objects](#complex-objects)
+          - [Optional Object Properties](#optional-object-properties)
+            - [Difference between optional properties and `undefined` or `null` properties of any type (`[variable]?` *vs.* `[type] | undefined | null`)](#difference-optional-properties-and-undefined-or-null)
       10. [Alias](#alias)
       11. [Union](#union)
       12. [Intersection](#intersection)
@@ -58,13 +60,17 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
       4. [Wildcard Module Declarations](#wildcard-module-declarations)
       5. [UMD modules](#umd-modules)
 8. [Interfaces](#interfaces)
-      1. [Implements Keyword](#implements-keyword)
+      1. [Optional Properties](#optional-properties)
+      2. [Index Signatures](#index-signatures)
+      3. [Implements Keyword](#implements-keyword)
+          - [References (React.createRef() or useRef API)](#reference-prop-types)
           - [Implementing an `interface` to a `Class`](#implementing-interface-to-class)
           - [Implementing an `interface` to a `function`](#implementing-interface-to-function)
-      2. [Extends Keyword (Interface Inheritance)](#extends-keyword-interface-inheritance)
-      3. [`Omit` type when extending an interface](#omit-type-interfaces)
-      4. [Omitting specific properties when extending an interface](#exclude-interface-properties)
-      5. [Type checking for interfaces](#type-chkecking-interfaces)
+      4. [Extends Keyword (Interface Inheritance)](#extends-keyword-interface-inheritance)
+      5. [`Omit` type when extending an interface](#omit-type-interfaces)
+      6. [Omitting specific properties when extending an interface](#exclude-interface-properties)
+      7. [Type checking for interfaces](#type-chkecking-interfaces)
+      8. [Optional properties](#optional-properties)
 9. [Generics](#generators)
       1. [Simple Generics](#simple-generics)
       2. [Better Generics](#better-generics)
@@ -316,6 +322,57 @@ As you may expect, the assigned types to the `object` key-value pairs can reach 
   };
   // complex = {}; // Not possible.
 ```
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+#### Optional object properties
+
+In TypeScript, all newly declared **object properties** (including both **function parameters**, and **interface properties**) may be declared as *optional*. To do so, we must place a `?` character after the key (or name) of the property when declaring it (a postfix notation). Here's an example:
+
+```ts
+  const right: { name: string, age?: number } = {
+    name: 'Robert'
+  };
+
+  const alsoRight: { name: string, age?: number } = {
+    name: 'Robert',
+    age: 24
+  };
+
+  // This is not possible because the name key-value pair is missing.
+  // const wrong: { name: string, age?: number } = {
+  //   age: 24
+  // };
+```
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="difference-optional-properties-and-undefined-or-null"></a>
+
+##### Difference between optional properties and `undefined` or `null` properties of any type (`[variable]?` and `[type] | undefined | null`)
+
+**Note** that you *might* think that the type of the `age` property becomes `number | undefined | null`, but that is absolutely not the case and it's quite the contrary. The property `age` will still be of type `number` and not accept any other unless explicitly typed. This is a bit of a grey area because the compiler will run in the case where `age` may not be an optional property, while still defined as `undefined` or `null`.
+
+Here's an example that leads to an error on runtime:
+
+```ts
+  const nullCompiles: { name: string, age: number } = {
+    name: 'Robert',
+    age: null
+  };
+
+  const undefinedCompiles: { name: string, age: number } = {
+    name: 'Robert',
+    age: undefined
+  };
+
+  console.log('nullCompiles', nullCompiles);
+  console.log('undefinedCompiles', undefinedCompiles);
+
+  const undefinedAge = undefinedCompiles.age.toString(); // Will generate a crash
+```
+
+I presume that the reason the code of the example above is compiled successfully is because the compiler assumes age can only be of type number, so be careful if you ever run into strange bugs like these when using optional properties. I would recommend to be as explicit as possible when using TypeScript!
 
 [⬆️ Back to top](#table-of-contents)<br>
 
@@ -1296,7 +1353,13 @@ We can think of **interfaces** as a way to assign types to the structure of a va
   simpleGreet(simplePerson); // Prints: "Hello Robert!"
 ```
 
-You might think this would make interfaces not scallable because of very restrictive properties, but fortunately **properties can be optional**. To define an interface property as optional, we must place a `?` character after the key name of the property when defining it. Here's an example:
+You might think this would make interfaces not scallable because of very restrictive properties, but fortunately **properties can be optional**. More on this below!
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### Optional Properties
+
+[Very similar to the optional object properties](#optional-object-properties), to define an interface property as optional, we must place a `?` character after the key name of the property when defining it (a postfix notation). Here's an example:
 
 ```ts
   interface SimplePerson {
@@ -1305,11 +1368,18 @@ You might think this would make interfaces not scallable because of very restric
     age?: number;
   }
 
-  // const wrong: SimplePerson = { lastName: 'Molina', age: 24 }; // Not possible because the firstName key value pair is missing.
+  // Not possible because the firstName key-value pair is missing.
+  // const wrong: SimplePerson = { lastName: 'Molina', age: 24 }; 
   const right: SimplePerson = { firstName: 'Robert', age: 24 };
 ```
 
-We may also define the interface with *index signatures*, think of them like dynamic key value pairs. Here's an example:
+[⬆️ Back to top](#table-of-contents)<br>
+
+<a id="index-signatures"></a>
+
+### Index Signatures (Dynamic Property Names)
+
+We may also define the interface with *index signatures*, think of them like dynamic key-value pairs. Here's an example:
 
 ```ts
   interface NamedPerson {
@@ -1415,30 +1485,50 @@ One such example is an object that acts as both a function and an object, with a
 
 ### Extends Keyword (Interface Inheritance)
 
-Just like how a `class` may extend its properties by inheriting `class` or `abstract class` properties, **interfaces may also inherit properties to extend its own properties**. It's done exactly as you'd expect, here's an example using the `NamedPerson` interface shown in the examples above to extend a new interface defined as `AgedPerson`:
+Similar to how a `class` can extend its properties by inheriting another `class` or `abstract class` properties, **interfaces may also inherit properties to extend its own properties**. Here's a simple example similar to the one as shown in the [TypeScript official documentation about extending interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html):
 
 ```ts
-  interface NamedPerson {
-    firstName: string;
-    age?: number;
-    [propName: string]: any;
-    greet(lastName: string): void;
+  interface Shape {
+    color: string;
   }
 
-  interface AgedPerson extends NamedPerson {
-    age: number;
+  interface Square extends Shape {
+    sideLength: number;
   }
 
-  const oldPerson: AgedPerson = {
-    age: 74,
-    firstName: 'An Old Guy',
-    greet(lastName: string) {
-      console.log(`Hello Sr. ${lastName}.`);
-    }
+  const square: Square = {
+    color: "blue",
+    sideLength: 10
+  };
+```
+
+By extending an interface, we are essentially mixing the "old" interface into a new interface, with newly added properties. To quote the official documentation:
+
+> This allows us to copy the members of one interface into another, which gives you more flexibility in how you separate your interfaces into reusable components.
+
+It is also possible to combine any number of interfaces into one, this a concept known as **composition** in programming, and it is possible to *compose* multiple interfaces into one, we will use this to serve as an example of *composition* **by extending multiple interfaces into a single interface**. Here's another example similar to the one as shown in the [TypeScript official documentation about extending interfaces](https://www.typescriptlang.org/docs/handbook/interfaces.html):
+
+```ts
+  interface Shape {
+    color: string;
+  }
+
+  interface PenStroke {
+    penWidth: number;
+  }
+
+  interface Square extends Shape, PenStroke {
+    sideLength: number;
+  }
+
+  const square: Square = {
+    color: "magenta",
+    penWidth: 2.5,
+    sideLength: 0.5
   }
 ```
 
-As you can see, the `oldPerson` will be restricted to the `AgePerson` type structure, which inherits all of `NamedPerson` properties.
+Notice, how both `Shape` and `PenStroke` were mixed to create `Square` while also declaring an additional property named `sideLength`. Bear in mind that **all** of the extended interfaces must be **structurally compatible** or else the compiler will throw an error. As a final note, we can also omit (by either picking or excluding) properties, more on this directly below.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
