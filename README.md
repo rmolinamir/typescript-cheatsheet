@@ -97,6 +97,16 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [TypeScript & useRef](#typescript-useref)
           - [TypeScript & React.createRef](#typescript-reactcreateref)
       4. [Setting up Event Handlers](#setting-up-event-references)
+      5. [TypeScript and React Hooks](#typescript-and-react-hooks)
+          - [useState](#typescript-usestate)
+          - [useEffect](#typescript-useeffect)
+          - [useContext](#typescript-usecontext)
+          - [useReducer](#typescript-usereducer)
+          - [useCallback](#typescript-usecallback)
+          - [useMemo](#typescript-usememo)
+          - [useImperativeHandle](#typescript-useimperativehandle)
+          - [useLayoutEffect](#typescript-useLayoutEffect)
+          - [useDebugValue](#typescript-usedebugvalue)
 13. [Feedback](#feedback)
 14. [Contribute](#contribute)
 
@@ -2560,6 +2570,52 @@ Let's create two event handlers, a `MouseEvent` handler that will prevent the de
     );
   }
 ```
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+## TypeScript and React Hooks
+
+> Intro
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### useState
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### useEffect
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### useContext
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### useReducer
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### useCallback
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### useMemo
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### useRef
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### useImperativeHandle
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### useLayoutEffect
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### useDebugValue
 
 [⬆️ Back to top](#table-of-contents)<br>
 
