@@ -2575,7 +2575,43 @@ Let's create two event handlers, a `MouseEvent` handler that will prevent the de
 
 ## TypeScript and React Hooks
 
-> Intro
+In this section, we wil cover how to use the React Hooks implemented in v16.8 in TypeScript. It will be assumed that the reader has at least basic knowledge of Hooks and generics. Generics are **heavily** used alongside Hooks, mostly to set the type(s) of the variables that will be returned from the hooks, e.g., a state variable returned from `useState`. In general, it is only necessary to type a hook if it returns a value, here' an example with `useState`:
+
+Given `useState` , we can specify the type of the returning value by declaring it in TypeScript as follows:
+
+```tsx
+  const [state, setState] = useHook<T>;
+```
+
+The variable `state`, will be of type `T`. If we defined `T` as:
+
+```tsx
+  type T = number | null;
+```
+
+Then `state` and `setState` will be defined as:
+
+```tsx
+  let state: number | null;
+  let setState: (value: number | null) => void;
+
+
+  Dispatch<SetStateAction<S>>
+```
+
+Or, as the React does it by applying generics for scalability:
+
+```tsx
+  type Dispatch<A> = (value: A) => void;
+  type SetStateAction<S> = S | ((prevState: S) => S);
+
+  let state: number | null;
+  let setState: Dispatch<SetStateAction<number | null>>;
+```
+
+If the above seems too complicated, don't worry about it too much. The reason they declare types such as `Dispatch` is because they use it in *many* places, and as we have covered already, generics are great for that reason.
+
+If your variable **does not** returns a hook, chances are you will still need to type its parameters, e.g. `useEffect`, or even *custom hooks*. We will talk about custom hooks at the end of this section since it is the most complicated topic due to the literal infinite hooks anyone could make, nevertheless, we will try to showcase the typing of custom hooks similar to how React types their own "default" hooks by taking a look at some of their own hooks as examples, with the intention of making them as general and broad as possible.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
