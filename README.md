@@ -107,6 +107,7 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [useImperativeHandle](#useimperativehandle)
           - [useLayoutEffect](#useLayoutEffect)
           - [useDebugValue](#usedebugvalue)
+          - [Custom Hooks](#custom-hooks)
 13. [Feedback](#feedback)
 14. [Contribute](#contribute)
 
@@ -2652,6 +2653,10 @@ If your variable **does not** returns a hook, chances are you will still need to
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useDebugValue
+
+[⬆️ Back to top](#table-of-contents)<br>
+
+### Custom Hooks
 
 [⬆️ Back to top](#table-of-contents)<br>
 
