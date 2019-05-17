@@ -2593,11 +2593,8 @@ The variable `state`, will be of type `T`. If we defined `T` as:
 Then `state` and `setState` will be defined as:
 
 ```tsx
-  let state: number | null;
-  let setState: (value: number | null) => void;
-
-
-  Dispatch<SetStateAction<S>>
+  const state: number | null;
+  const setState: (value: number | null) => void;
 ```
 
 Or, as the React does it by applying generics for scalability:
@@ -2606,11 +2603,11 @@ Or, as the React does it by applying generics for scalability:
   type Dispatch<A> = (value: A) => void;
   type SetStateAction<S> = S | ((prevState: S) => S);
 
-  let state: number | null;
-  let setState: Dispatch<SetStateAction<number | null>>;
+  const state: number | null;
+  const setState: Dispatch<SetStateAction<number | null>>;
 ```
 
-If the above seems too complicated, don't worry about it too much. The reason they declare types such as `Dispatch` is because they use it in *many* places, and as we have covered already, generics are great for that reason.
+If the above seems too complicated, don't worry about it too much. The reason they declare type aliases such as `Dispatch` is because they are used in *many* places, and as we have covered already, generics are great for that reason.
 
 If your variable **does not** returns a hook, chances are you will still need to type its parameters, e.g. `useEffect`, or even *custom hooks*. We will talk about custom hooks at the end of this section since it is the most complicated topic due to the literal infinite hooks anyone could make, nevertheless, we will try to showcase the typing of custom hooks similar to how React types their own "default" hooks by taking a look at some of their own hooks as examples, with the intention of making them as general and broad as possible.
 
