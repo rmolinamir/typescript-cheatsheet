@@ -2615,6 +2615,72 @@ If your variable **does not** returns a hook, chances are you will still need to
 
 ### useState
 
+Arguably the most basic hook. Because of this, let's talk bring one more point one last time about the basics of TypeScript and React Hooks. There are two ways to type a hook function that returnS a value, assuming the hook is similar to `useState` where it accepts generic types:
+
+1. By typing the returned value.
+2. By typing the hook.
+
+As shown above, `useState` will return an array with two values. The first value of the array will be our  that can be defined as:
+
+By typing the returned value:
+
+```tsx
+const [state, setState]: [S: Dispatch<SetStateAction<S>>] = useState(initialState);
+```
+
+By typing the hook:
+
+```tsx
+const [state, setState] = useState<S>(initialState);
+```
+
+Both:
+
+```tsx
+const [state, setState]: [S: Dispatch<SetStateAction<S>>] = useState<S>(initialState);
+```
+
+Obviously, option number 3 is borderline overkill. Option number 2 is easily the most readable of the three and will be the most commonly typed expression you might come across. Let's have a look a more practical example of a hero slider component by building up its initial settings:
+
+```tsx
+  interface ISettings {
+    slidingDuration: number
+    isSmartSliding: boolean
+    shouldAutoplay: boolean
+    width: WidthProperty<string | number>
+    height: HeightProperty<string | number>
+  }
+
+  /**
+   * Initial settings for the slider.
+   */
+  const initialSettings: ISettings = {
+    slidingDuration: 500,
+    isSmartSliding: true,
+    shouldAutoplay: true,
+    autoplayDuration: 8000,
+    width: '100%',
+    height: '100%',
+    ...props.settings
+  }
+
+  const [settings, setSettings] = React.useState<ISettings>(initialSettings)
+
+  
+  /**
+   * Subscribes to any changes made to the settings, then re-sets them through `setSettings`.
+   */
+  React.useEffect(() => {
+    setSettings({
+      ...settings,
+      ...props.settings as ISettings
+    })
+  }, [props.settings])
+```
+
+The example above is a snippet of [this component](https://github.com/rmolinamir/hero-slider/blob/master/src/Slider/HeroSlider.tsx). The slider is being configured with its initial default settings, or any other settings the developer may have passed down to it. Then, by setting up a subscription to any changes made to the `settings` property, we use the `useEffects` hook that will re-set the settings by executing the dispatched returned from `useState`.
+
+
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useEffect
