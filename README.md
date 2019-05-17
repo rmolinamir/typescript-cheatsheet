@@ -2680,10 +2680,38 @@ Obviously, option number 3 is borderline overkill. Option number 2 is easily the
 
 The example above is a snippet of [this component](https://github.com/rmolinamir/hero-slider/blob/master/src/Slider/HeroSlider.tsx). The slider is being configured with its initial default settings, or any other settings the developer may have passed down to it. Then, by setting up a subscription to any changes made to the `settings` property, we use the `useEffects` hook that will re-set the settings by executing the dispatched returned from `useState`.
 
+Finally, as you may have already been able to tell; `useState` is defined by the React team as:
+
+```tsx
+  function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>];
+```
 
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useEffect
+
+As stated above, the `useEffects` hook will execute whenever any changes are made to any variable(s) we subscribe to. Although are no typings in `useEffect`, it is worth nothing that TypeScript will function normally from within the scope of an `useEffect` hook, as regular.It is also worth noting that [there is quite a discussion going on about `useEffects` and how actions and dispatchers are handled, I recommend giving it a read, especially the linked comment](https://github.com/facebook/create-react-app/issues/6880#issuecomment-488158024).
+
+In any case, let's take a look at how `useEffect` is defined:
+
+```tsx
+  function useEffect(effect: EffectCallback, deps?: DependencyList): void;
+
+  type EffectCallback = () => (void | (() => void | undefined));
+  type DependencyList = ReadonlyArray<any>;
+
+  interface ReadonlyArray<T> {
+    readonly length: number;
+    toString(): string;
+    toLocaleString(): string;
+    indexOf(searchElement: T, fromIndex?: number): number;
+    ...
+  }
+```
+
+The point of showcasing how the React team defines their official hooks, is to give the reader an idea of how should custom hooks be typed and defined, and to be aware of the best coding practices of today.
+
+It's worth nothing that `ReadonlyArray<T>` is actually defined by TypeScript, [and to quote the official documentation about this type definition](https://www.typescriptlang.org/docs/handbook/interfaces.html), **TypeScript comes with a `ReadonlyArray<T>` type that is the same as `Array<T>` with all mutating methods removed**.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
