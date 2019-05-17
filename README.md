@@ -2717,6 +2717,176 @@ It's worth nothing that `ReadonlyArray<T>` is actually defined by TypeScript, [a
 
 ### useContext
 
+Probably the most powerful hook when it comes to practicality alongside `useReducer`, `useContext` accepts a context returned from `React.createContext` and then returns the current value for that context. Having said that, you might already have guessed how `useContext` is defined, but let's give it a go anyways:
+
+```tsx
+  ...
+
+  type Provider<T> = ProviderExoticComponent<ProviderProps<T>>;
+  type Consumer<T> = ExoticComponent<ConsumerProps<T>>;
+
+  interface Context<T> {
+      Provider: Provider<T>;
+      Consumer: Consumer<T>;
+      displayName?: string;
+  }
+
+  function useContext<T>(context: Context<T>): T;
+```
+
+Generics all over the place! They provide us with a way to build any number of reusable, consistent, and well defined API. 
+
+Here is a basic example of `useContext`, which provides CSS styling to buttons that are within the context:
+
+Let's start by defining the context created by React:
+
+```tsx
+  interface IContextProps {
+    // CSS Classes
+    className?: string
+    classNames: IClassNamesByButton
+    setGlobalClassName?: (className: string) => void
+    setCustomClassname?: (classNameKey:string, className: string) => void
+    // CSS Properties
+    style?: React.CSSProperties
+    setStyle?: (CSSstyles: React.CSSProperties) => void
+    // React Children
+    children?: React.ReactNode
+  }
+
+  /**
+   * Button functionality and context.
+   */
+  const initialContext: IContextProps = {
+    className: [classes.Button, classes.Disabled].join(' '),
+    classNames: classNamesByButton,
+    style: undefined,
+  }
+
+  const Context: React.Context<IContextProps> = React.createContext(initialContext)
+```
+
+Imported the context and other necessary dependencies, then using `useContext`:
+
+```tsx
+// ...
+const useContext = { React }
+import { Context, capitalizeString } from './context'
+import classes from './Button.css'
+
+interface IButtonProps extends IButtonData {
+  button: string,
+  reference?: React.RefObject<HTMLButtonElement>
+  children?: React.ReactNode
+  blockButton?: boolean
+}
+
+const ButtonComponent = (props: IButtonProps) => {
+  const context = useContext(Context)
+  const { className, classNames } = context
+
+  const buttonClasses: (string | undefined)[] = [className]
+
+  // Classes are picked depending on the `button` prop of type string
+  const button: string | undefined = props.button ? capitalizeString(props.button) : undefined
+
+  // Boolean to keep track of matched CSS classes, sort of like a hash.
+  let bIsMatch = false
+
+  // Selects a className from the imported context.
+  if (button) {
+    if (classNames[button]) {
+      bIsMatch = true
+      buttonClasses.push(classNames[button])
+    }
+  }
+
+  // In case there were no matches, then set the button class equal to the Default class.
+  if (!bIsMatch) {
+    buttonClasses.push(classes.Default)
+  }
+
+  /**
+   * We are omitting the blockButton, children, and reference
+   * props from the data button properties.
+   */
+  const { blockButton, reference, children, ...data } = props
+
+  /**
+   * If blockButton is true, then apply the BlockButton class.
+   */
+  if (blockButton) {
+    buttonClasses.push(classes.BlockButton)
+  }
+
+  /**
+   * Build the button data object that will be passed down to the Button component.
+   */
+  const buttonData: IButtonData = ButtonData.setData( { ...data }, buttonClasses)
+
+  /**
+   * CSS Properties.
+   */
+  buttonData.style = context.style || props.style
+
+  return (
+    <Button
+      reference={reference}
+      data={buttonData}
+    >
+      {children}
+    </Button>
+  )
+}
+
+export default ButtonComponent
+
+```
+
+Lets have a look at a more advanced example of `useContext` typing, that composes the multiple contexts argument of a higher-order component, which then passes down the composed contexts as prop to the wrapped component:
+
+```tsx
+  interface IContexts {
+    [propName: string]: React.Context<any>
+  }
+
+  const withContexts = (
+      WrappedComponent: React.JSXElementConstructor<any>,
+      Contexts: IContexts,
+    ) => {
+    return (props: any) => {
+      const contextKeys: string[] = Object.keys(Contexts)
+
+      /**
+       * Reducing the array of context keys, based on the `Contexts`
+       * object, into another object with the returned context values
+       * from `useContext`.
+       */
+      const usedContexts = contextKeys.reduce(
+        (
+          contexts: { [propName: string]: any },
+          key: string
+        ) => {
+          return Object.assign(
+            contexts,
+            { [key]: useContext<any>(Contexts[key]) }
+          )
+        },
+        {} // Initial value
+      )
+
+      const newProps: { [propName: string]: any } = {
+        usedContexts,
+        ...props
+      }
+
+      return ( 
+        <WrappedComponent {...newProps} />
+      )
+    }
+  }
+```
+
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useReducer
