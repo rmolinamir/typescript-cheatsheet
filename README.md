@@ -2651,11 +2651,8 @@ The variable `state`, will be of type `T`. If we defined `T` as:
 Then `state` and `setState` will be defined as:
 
 ```tsx
-  let state: number | null;
-  let setState: (value: number | null) => void;
-
-
-  Dispatch<SetStateAction<S>>
+  const state: number | null;
+  const setState: (value: number | null) => void;
 ```
 
 Or, as the React does it by applying generics for scalability:
@@ -2664,11 +2661,11 @@ Or, as the React does it by applying generics for scalability:
   type Dispatch<A> = (value: A) => void;
   type SetStateAction<S> = S | ((prevState: S) => S);
 
-  let state: number | null;
-  let setState: Dispatch<SetStateAction<number | null>>;
+  const state: number | null;
+  const setState: Dispatch<SetStateAction<number | null>>;
 ```
 
-If the above seems too complicated, don't worry about it too much. The reason they declare types such as `Dispatch` is because they use it in *many* places, and as we have covered already, generics are great for that reason.
+If the above seems too complicated, don't worry about it too much. The reason they declare type aliases such as `Dispatch` is because they are used in *many* places, and as we have covered already, generics are great for that reason.
 
 If your variable **does not** returns a hook, chances are you will still need to type its parameters, e.g. `useEffect`, or even *custom hooks*. We will talk about custom hooks at the end of this section since it is the most complicated topic due to the literal infinite hooks anyone could make, nevertheless, we will try to showcase the typing of custom hooks similar to how React types their own "default" hooks by taking a look at some of their own hooks as examples, with the intention of making them as general and broad as possible.
 
@@ -2676,13 +2673,277 @@ If your variable **does not** returns a hook, chances are you will still need to
 
 ### useState
 
+Arguably the most basic hook. Because of this, let's talk bring one more point one last time about the basics of TypeScript and React Hooks. There are two ways to type a hook function that returnS a value, assuming the hook is similar to `useState` where it accepts generic types:
+
+1. By typing the returned value.
+2. By typing the hook.
+
+As shown above, `useState` will return an array with two values. The first value of the array will be our  that can be defined as:
+
+By typing the returned value:
+
+```tsx
+const [state, setState]: [S: Dispatch<SetStateAction<S>>] = useState(initialState);
+```
+
+By typing the hook:
+
+```tsx
+const [state, setState] = useState<S>(initialState);
+```
+
+Both:
+
+```tsx
+const [state, setState]: [S: Dispatch<SetStateAction<S>>] = useState<S>(initialState);
+```
+
+Obviously, option number 3 is borderline overkill. Option number 2 is easily the most readable of the three and will be the most commonly typed expression you might come across. Let's have a look a more practical example of a hero slider component by building up its initial settings:
+
+```tsx
+  interface ISettings {
+    slidingDuration: number
+    isSmartSliding: boolean
+    shouldAutoplay: boolean
+    width: WidthProperty<string | number>
+    height: HeightProperty<string | number>
+  }
+
+  /**
+   * Initial settings for the slider.
+   */
+  const initialSettings: ISettings = {
+    slidingDuration: 500,
+    isSmartSliding: true,
+    shouldAutoplay: true,
+    autoplayDuration: 8000,
+    width: '100%',
+    height: '100%',
+    ...props.settings
+  }
+
+  const [settings, setSettings] = React.useState<ISettings>(initialSettings)
+
+  
+  /**
+   * Subscribes to any changes made to the settings, then re-sets them through `setSettings`.
+   */
+  React.useEffect(() => {
+    setSettings({
+      ...settings,
+      ...props.settings as ISettings
+    })
+  }, [props.settings])
+```
+
+The example above is a snippet of [this component](https://github.com/rmolinamir/hero-slider/blob/master/src/Slider/HeroSlider.tsx). The slider is being configured with its initial default settings, or any other settings the developer may have passed down to it. Then, by setting up a subscription to any changes made to the `settings` property, we use the `useEffects` hook that will re-set the settings by executing the dispatched returned from `useState`.
+
+Finally, as you may have already been able to tell; `useState` is defined by the React team as:
+
+```tsx
+  function useState<S>(initialState: S | (() => S)): [S, Dispatch<SetStateAction<S>>];
+```
+
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useEffect
 
+As stated above, the `useEffects` hook will execute whenever any changes are made to any variable(s) we subscribe to. Although are no typings in `useEffect`, it is worth nothing that TypeScript will function normally from within the scope of an `useEffect` hook, as regular.It is also worth noting that [there is quite a discussion going on about `useEffects` and how actions and dispatchers are handled, I recommend giving it a read, especially the linked comment](https://github.com/facebook/create-react-app/issues/6880#issuecomment-488158024).
+
+In any case, let's take a look at how `useEffect` is defined:
+
+```tsx
+  function useEffect(effect: EffectCallback, deps?: DependencyList): void;
+
+  type EffectCallback = () => (void | (() => void | undefined));
+  type DependencyList = ReadonlyArray<any>;
+
+  interface ReadonlyArray<T> {
+    readonly length: number;
+    toString(): string;
+    toLocaleString(): string;
+    indexOf(searchElement: T, fromIndex?: number): number;
+    ...
+  }
+```
+
+The point of showcasing how the React team defines their official hooks, is to give the reader an idea of how should custom hooks be typed and defined, and to be aware of the best coding practices of today.
+
+It's worth nothing that `ReadonlyArray<T>` is actually defined by TypeScript, [and to quote the official documentation about this type definition](https://www.typescriptlang.org/docs/handbook/interfaces.html), **TypeScript comes with a `ReadonlyArray<T>` type that is the same as `Array<T>` with all mutating methods removed**.
+
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useContext
+
+Probably the most powerful hook when it comes to practicality alongside `useReducer`, `useContext` accepts a context returned from `React.createContext` and then returns the current value for that context. Having said that, you might already have guessed how `useContext` is defined, but let's give it a go anyways:
+
+```tsx
+  ...
+
+  type Provider<T> = ProviderExoticComponent<ProviderProps<T>>;
+  type Consumer<T> = ExoticComponent<ConsumerProps<T>>;
+
+  interface Context<T> {
+      Provider: Provider<T>;
+      Consumer: Consumer<T>;
+      displayName?: string;
+  }
+
+  function useContext<T>(context: Context<T>): T;
+```
+
+Generics all over the place! They provide us with a way to build any number of reusable, consistent, and well defined API. 
+
+Here is a basic example of `useContext`, which provides CSS styling to buttons that are within the context:
+
+Let's start by defining the context created by React:
+
+```tsx
+  interface IContextProps {
+    // CSS Classes
+    className?: string
+    classNames: IClassNamesByButton
+    setGlobalClassName?: (className: string) => void
+    setCustomClassname?: (classNameKey:string, className: string) => void
+    // CSS Properties
+    style?: React.CSSProperties
+    setStyle?: (CSSstyles: React.CSSProperties) => void
+    // React Children
+    children?: React.ReactNode
+  }
+
+  /**
+   * Button functionality and context.
+   */
+  const initialContext: IContextProps = {
+    className: [classes.Button, classes.Disabled].join(' '),
+    classNames: classNamesByButton,
+    style: undefined,
+  }
+
+  const Context: React.Context<IContextProps> = React.createContext(initialContext)
+```
+
+Imported the context and other necessary dependencies, then using `useContext`:
+
+```tsx
+// ...
+const useContext = { React }
+import { Context, capitalizeString } from './context'
+import classes from './Button.css'
+
+interface IButtonProps extends IButtonData {
+  button: string,
+  reference?: React.RefObject<HTMLButtonElement>
+  children?: React.ReactNode
+  blockButton?: boolean
+}
+
+const ButtonComponent = (props: IButtonProps) => {
+  const context = useContext(Context)
+  const { className, classNames } = context
+
+  const buttonClasses: (string | undefined)[] = [className]
+
+  // Classes are picked depending on the `button` prop of type string
+  const button: string | undefined = props.button ? capitalizeString(props.button) : undefined
+
+  // Boolean to keep track of matched CSS classes, sort of like a hash.
+  let bIsMatch = false
+
+  // Selects a className from the imported context.
+  if (button) {
+    if (classNames[button]) {
+      bIsMatch = true
+      buttonClasses.push(classNames[button])
+    }
+  }
+
+  // In case there were no matches, then set the button class equal to the Default class.
+  if (!bIsMatch) {
+    buttonClasses.push(classes.Default)
+  }
+
+  /**
+   * We are omitting the blockButton, children, and reference
+   * props from the data button properties.
+   */
+  const { blockButton, reference, children, ...data } = props
+
+  /**
+   * If blockButton is true, then apply the BlockButton class.
+   */
+  if (blockButton) {
+    buttonClasses.push(classes.BlockButton)
+  }
+
+  /**
+   * Build the button data object that will be passed down to the Button component.
+   */
+  const buttonData: IButtonData = ButtonData.setData( { ...data }, buttonClasses)
+
+  /**
+   * CSS Properties.
+   */
+  buttonData.style = context.style || props.style
+
+  return (
+    <Button
+      reference={reference}
+      data={buttonData}
+    >
+      {children}
+    </Button>
+  )
+}
+
+export default ButtonComponent
+
+```
+
+Lets have a look at a more advanced example of `useContext` typing, that composes the multiple contexts argument of a higher-order component, which then passes down the composed contexts as prop to the wrapped component:
+
+```tsx
+  interface IContexts {
+    [propName: string]: React.Context<any>
+  }
+
+  const withContexts = (
+      WrappedComponent: React.JSXElementConstructor<any>,
+      Contexts: IContexts,
+    ) => {
+    return (props: any) => {
+      const contextKeys: string[] = Object.keys(Contexts)
+
+      /**
+       * Reducing the array of context keys, based on the `Contexts`
+       * object, into another object with the returned context values
+       * from `useContext`.
+       */
+      const usedContexts = contextKeys.reduce(
+        (
+          contexts: { [propName: string]: any },
+          key: string
+        ) => {
+          return Object.assign(
+            contexts,
+            { [key]: useContext<any>(Contexts[key]) }
+          )
+        },
+        {} // Initial value
+      )
+
+      const newProps: { [propName: string]: any } = {
+        usedContexts,
+        ...props
+      }
+
+      return ( 
+        <WrappedComponent {...newProps} />
+      )
+    }
+  }
+```
 
 [⬆️ Back to top](#table-of-contents)<br>
 
