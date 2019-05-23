@@ -2949,6 +2949,304 @@ Lets have a look at a more advanced example of `useContext` typing, that compose
 
 ### useReducer
 
+Perhaps the "primordial" hook, many hooks are based on how `useReducer` works, including some of the oficial React hooks such as `useState`. This, of course, thanks to Redux and its popularity. As you might know, `useReducer` is used mainly whenever you need to tackle at least one of the two following scenarios:
+
+1. You're handling complex state logic, meaning multiple state values for example.
+2. You're find yourself in need of multiple dispatchers for a single state.
+
+Or both! Whatever may be the case, using TypeScript with `useReducer` is not too hard, but it's certainly a bit tedious because there are many variables involved, assuming that at least the basics of `useReducer` are known. The good news is that every reducer will follow the same steps whenever typing it. Let's start by comparing how your typical `useReducer` looks like in JavaScript to a typical `useReducer` in TypeScript:
+
+**JavaScript**:
+
+```jsx
+  const [state, dispatch] = React.useReducer(reducer, initialState)
+```
+
+**TypeScript**:
+
+```tsx
+  const [state, dispatch] = React.useReducer<React.Reducer<IInputState, IReducerAction>>(reducer, initialState)
+```
+
+That's it! That's all there is to typing an `useReducer`. However, let's have a look at a real `useReducer` example that handles an input's value, validity, and a touched state that becomes `true` when interacted with. This example will cover:
+
+1. TypeScript `interface` definitions for the `state` (and `initialState`), `dispatch` (actions), and `reducer`.
+2. A TypeScript `enum` definition to handle a switch statement and its cases inside the `reducer`, similar to reducer stores that are commonly used in Redux and their action types.
+
+Having said all that, to sum up, any and every `useReducer` can be built by following these steps:
+
+1. Define and declare all of the necessary `interface` and `enum` types for our reducer and its variables.
+2. Define a reducer, and apply our defined types to it, the reducer will typically look like this:
+
+```tsx
+  const reducer = (state: IState, action: IReducerAction) => {
+    const { handler, ...newState } = action
+    switch (handler) {
+      case EActionHandler.TYPE: // Enum member
+        return {
+          ...state,
+          ...newState
+        }
+      default:
+        throw new Error()
+    }
+  }
+```
+
+3. Lastly, define a `initialState` variable if needed, and a `useReducer` hook inside the React component, then it's good to go. The `useReducer` declaration will almost always look like this:
+
+```tsx
+  const [state, dispatch] = React.useReducer<React.Reducer<IState, IReducerAction>>(reducer, initialState)
+```
+
+Let's apply these steps to our example. Let's begin by typing the necessary `interface` structures for the following variables, and the reducer `enum` for the action types:
+
+```tsx
+  /**
+   * REDUCER TYPE DEFINITIONS:
+   */
+
+  // `reducer` action types.
+  enum EOnChangeHandler {
+    VALUE,
+    VALID,
+    TOUCHED,
+    STATE
+  }
+
+  // `state` and `initialState`.
+  interface IInputState {
+    identifier?: string
+    value?: value
+    validationMessage: string
+    className?: string
+    valueType?: string
+    validation?: IInputValidation
+    style?: React.CSSProperties
+    placeholder?: string
+    elementConfig?: IInputConfig
+    required?: boolean
+    valid?: boolean
+    shouldValidate?: boolean
+    touched?: boolean
+  }
+
+  // Interface for the `validation` property of `IInputState`.
+  interface IInputValidation {
+    customRules?: ICustomRulesValidation
+    required?: boolean
+    email?: boolean
+    number?: boolean
+    minLength?: number
+    maxLength?: number
+  }
+
+  // For the `dispatch` actions/arguments.
+  interface IReducerAction extends IInputState {
+    handler: EOnChangeHandler
+    valid: boolean
+  }
+```
+
+Next, let's apply define a `reducer` function and apply typing. Here's where the `interface` and `enum` types come in:
+
+```tsx
+  const reducer = (state: IInputState, action: IReducerAction) => {
+    const { handler, ...newState } = action
+    switch (handler) {
+      case EOnChangeHandler.STATE:
+        return {
+          ...state,
+          ...newState
+        }
+      case EOnChangeHandler.TOUCHED:
+        state.touched = newState.touched
+        return state
+      case EOnChangeHandler.VALID:
+        state.valid = newState.valid
+        return state
+      case EOnChangeHandler.VALUE:
+        state.value = newState.value
+        return state
+      default:
+        throw new Error()
+    }
+  }
+```
+
+Let's now define our `initialState` variable, and our `useReducer` hook inside our input component, and then we'll plug everything up:
+
+```tsx
+const MyInput = withContext(React.memo((props: IInputProps) => {
+  /**
+   * Input initial state, which dictates how it will behave (validation, validity, required, etc.).
+   */
+  const initialState: IInputState = {
+    identifier: props.identifier || (`${displayName}_${props.placeholder || props.type || 'default'}`),
+    value: props.value || '',
+    validationMessage: '',
+    valueType: props.valueType || props.placeholder && props.placeholder.toLowerCase(),
+    placeholder: props.placeholder,
+    validation: {
+      required: props.required || false,
+      email: props.type === 'email' && true, 
+      ...props.validation
+    },
+    required: props.required || false,
+    shouldValidate: Boolean(props.validation) || false,
+    valid: props.valid || false,
+    touched: props.touched || false
+  }
+  
+  const [state, dispatch] = React.useReducer<React.Reducer<IInputState, IReducerAction>>(reducer, initialState)
+}
+```
+
+Finally, let's plug everything up and see our reducer in action:
+
+```tsx
+  /**
+   * REDUCER TYPE DEFINITIONS:
+   */
+  interface IInputState {
+    identifier?: string
+    value?: value
+    validationMessage: string
+    className?: string
+    valueType?: string
+    validation?: IInputValidation
+    style?: React.CSSProperties
+    placeholder?: string
+    elementConfig?: IInputConfig
+    required?: boolean
+    valid?: boolean
+    shouldValidate?: boolean
+    touched?: boolean
+  }
+
+  // Interface for the `validation` property of `IInputState`
+  interface IInputValidation {
+    customRules?: ICustomRulesValidation
+    required?: boolean
+    email?: boolean
+    number?: boolean
+    minLength?: number
+    maxLength?: number
+  }
+
+  interface IReducerAction extends IInputState {
+    handler: EOnChangeHandler
+    valid: boolean
+  }
+
+  enum EOnChangeHandler {
+    VALUE,
+    VALID,
+    TOUCHED,
+    STATE
+  }
+
+  const reducer = (state: IInputState, action: IReducerAction) => {
+    const { handler, ...newState } = action
+    switch (handler) {
+      case EOnChangeHandler.STATE:
+        return {
+          ...state,
+          ...newState
+        }
+      case EOnChangeHandler.TOUCHED:
+        state.touched = newState.touched
+        return state
+      case EOnChangeHandler.VALID:
+        state.valid = newState.valid
+        return state
+      case EOnChangeHandler.VALUE:
+        state.value = newState.value
+        return state
+      default:
+        throw new Error()
+    }
+  }
+
+  const MyInput = React.memo((props: IInputProps) => {
+    /**
+     * Input initial state.
+     */
+    const initialState: IInputState = {
+      identifier: props.identifier,
+      value: props.value || '',
+      validationMessage: '',
+      valueType: props.valueType,
+      placeholder: props.placeholder,
+      validation: {
+        required: props.required || false,
+        email: props.type === 'email' && true,
+        ...props.validation
+      },
+      required: props.required || false,
+      shouldValidate: Boolean(props.validation) || false,
+      valid: props.valid || false,
+      touched: props.touched || false
+    }
+
+    const [state, dispatch] = React.useReducer<React.Reducer<IInputState, IReducerAction>>(reducer, initialState)
+  
+    /**
+     * -------------------------------------
+     * ----------REDUCER DISPATCHERS--------
+     * -------------------------------------
+     * `onChangeHandler` handles the input `onChange` event.
+     * Evaluates de validity of the value respective to how it's set up through `checkValidity`.
+     * Executes the `props.onChange` callback if it exists after evaluating the value and saving it in the state.
+     */
+    const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
+      const value = event.target.value
+      const validation = checkValidity(value, state.validation, state.valueType)
+      const action: IReducerAction = {
+        valid: validation.status,
+        validationMessage: validation.message || state.validationMessage,
+        handler: EOnChangeHandler.STATE,
+        value: value,
+        touched: value && value !== '' ? true : false
+      }
+      dispatch({ ...action })
+    }
+
+    /**
+     * Subscribe to any changes to the `state.value` and `state.valid` properties.
+     * Execute `onChange` if any of them change, which will be handled
+     * by the `reducer`.
+     */
+    React.useEffect(() => {
+      if (props.onChange) {
+        props.onChange(state.identifier, state.value, state.valid)
+      }
+    }, [state.value, state.valid])
+
+    /**
+     * The input element configuration props.
+     */
+    const inputProps: IInputElementProps = {
+      ...
+      className: inputClasses.join(' '),
+      elementConfig: props.elementConfig,
+      required: props.required || false,
+      value: state.value,
+      valid: state.valid,
+      touched: state.touched,
+      shouldValidate: state.shouldValidate,
+      onChangeHandler: onChangeHandler,
+      style: props.disabled ? { opacity: 0.5, pointerEvents: 'none' } : undefined
+    }
+
+    // A lot more code needed, but let's focus on the reducer.
+
+    return (
+      <Password {...inputProps} />
+    )
+  })
+```
+
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useCallback
