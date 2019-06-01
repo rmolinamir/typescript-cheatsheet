@@ -3444,13 +3444,13 @@ It is quite literally just an object defined as `{ current: T }`. Where `T`, can
 
 > `useRef` returns a mutable ref object whose `.current` property is initialized to the passed argument (`initialValue`). The returned object will persist for the full lifetime of the component. Note that `useRef()` is useful for more than the `ref` attribute. It’s handy for keeping any mutable value around similar to how you’d use instance fields in classes.
 
-As mentioned above at the introduction of this section, and to emphasize what the Reac team has to say about `useRef`, we can use this hook to setup mutable values that will persist until the component is unmounted.
+As mentioned above at the introduction of this section, and to emphasize what the React team has to say about `useRef`, we can use this hook to set mutable values that will persist until the component is unmounted.
 
-Instead of providing a generic and simple example about using `useRef` to setup a reference to a DOM node you can find anywhere, let's have a look at relatively advanced yet simple applications of `useRef`, by using the previously referenced [hero-slider component](https://github.com/rmolinamir/hero-slider/blob/master/src/Slider/HeroSlider.tsx) in the `useMemo` section as a guide.
+Instead of providing a generic and simple example about using `useRef` to set a reference to a DOM node that you could find anywhere, let's look at relatively advanced yet simple applications of `useRef`, by using the previously referenced [hero-slider component](https://github.com/rmolinamir/hero-slider/blob/master/src/Slider/HeroSlider.tsx) in the `useMemo` section as a guide.
 
-In the hero-slider components, a couple features are available that use `useRef` to their advantage:
+In the `hero-slider` component, a couple features are available that use `useRef` to their advantage:
 
-The first feature are watchers to help both the autoplay instance of the hero-slider and the next, previous or specific slide setters dictate if they should change the slide, or wait until the slider is actually done sliding, and to also make them self-aware of which slide is active.
+The first feature are watchers that help both the autoplay instance of the hero-slider and the next, previous or specific slide setters to dictate if they should change the slide, or wait until the slider is actually done sliding, and to also make them self-aware of which slide is currently active.
 
 We will use two references to achieve this. `activeSlideWatcher` and `isDoneSlidingWatcher` are a mutable objects that will persist for the full lifetime of the hero-slider component.
 
