@@ -2954,7 +2954,25 @@ Perhaps the "primordial" hook, many hooks are based on how `useReducer` works, i
 1. You're handling complex state logic, meaning multiple state values for example.
 2. You're find yourself in need of multiple dispatchers for a single state.
 
-Or both! Whatever may be the case, using TypeScript with `useReducer` is not too hard, but it's certainly a bit tedious because there are many variables involved, assuming that at least the basics of `useReducer` are known. The good news is that every reducer will follow the same steps whenever typing it. Let's start by comparing how your typical `useReducer` looks like in JavaScript to a typical `useReducer` in TypeScript:
+Or both! Whatever may be the case, using TypeScript with `useReducer` is not too hard, but it's certainly a bit tedious because there are many variables involved, assuming that at least the basics of `useReducer` are known. The good news is that every reducer will follow the same steps whenever typing it. Before going into details about how to define types for the reducer, let's have a look at how the React team defined `useReducer`:
+
+```ts
+  function useReducer<R extends Reducer<any, any>>(
+    reducer: R,
+    initialState: ReducerState<R>,
+    initializer?: undefined
+  ): [ReducerState<R>, Dispatch<ReducerAction<R>>];
+```
+
+The first thing you might notice, is that it is very similar to `useState`. As mentioned above, `useState` is actually a very simplified version of `useReducer`, where you have a dispatcher and a state variable. The types `ReducerState` and `ReducerAction` are also defined as:
+
+```ts
+  type Reducer<S, A> = (prevState: S, action: A) => S;
+  type ReducerState<R extends Reducer<any, any>> = R extends Reducer<infer S, any> ? S : never;
+  type ReducerAction<R extends Reducer<any, any>> = R extends Reducer<any, infer A> ? A : never;
+```
+
+The main take of this, is that reducers are functions that take a previous state as a first argument, and an action **(which includes the payload)** as a second argument. This action will let the programmer decide what to do in the reducer. Let's now compare how your typical `useReducer` looks like in JavaScript to a typical `useReducer` in TypeScript:
 
 **JavaScript**:
 
