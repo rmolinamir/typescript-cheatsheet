@@ -3324,7 +3324,7 @@ Instead of returning a function as `useCallback` does, `useMemo` will return a v
 
 Same as every single hook shown before, generics are dominant. `useMemo` will take a *factory* or *create* function that returns a value of type `T` (think of React components, for example), and a dependency list to subscribe to. If any of the values in the list change, the hook will execute again. Otherwise it'll simply return the cached result!
 
-`useMemo` is a very, very useful hook. It can be implemented in many, many places within any application to improve performances. Here are some very simple examples of `useMemo` used inside [this hero slider component](https://github.com/rmolinamir/hero-slider/blob/master/src/Slider/HeroSlider.tsx).
+`useMemo` is a very, very useful hook. It can be implemented in many, many places within any application to improve performances. Here are some very simple examples of `useMemo` used inside [this hero-slider component](https://github.com/rmolinamir/hero-slider/blob/master/src/Slider/HeroSlider.tsx).
 
 There are two worker functions declared as `getChildren` and `setSlides` that can potentially be performance expensive. These functions will filter the `React.Children` props, and filter them to set up the slides of the hero slider according to the previously set settings. By using `useMemo`, we can memoize the initial returned values, so that every time these functions are executed in the future, the memoized values will be returned instead, and thus increasing performance.
 
@@ -3416,6 +3416,136 @@ There are two worker functions declared as `getChildren` and `setSlides` that ca
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useRef
+
+`useRef` is a hook commonly used to set up a reference to a DOM node. Unfortunately, most articles about this hook only touch upon using `useRef` *only* to setup references to DOM nodes as previously mentioned. In reality, `useRef` sets a reference to a mutable object which is then paired to a DOM node, but, there are *a lot* of equally or even more useful applications.
+
+Before going into how we can apply `useRef` to achieve results other than DOM nodes, it is worth mentioning that `useRef` behaves very similarly to pointers. [In computer science, a *pointer* is defined as](https://en.wikipedia.org/wiki/Pointer_(computer_programming)):
+
+> A pointer references a location in memory, and obtaining the value stored at that location is known as dereferencing the pointer. As an analogy, a page number in a book's index could be considered a pointer to the corresponding page; dereferencing such a pointer would be done by flipping to the page with the given page number and reading the text found on that page.
+
+The most obvious comparison would be C++ pointers. With the references returned by `useRef` we can achieve very similar results, and instead of setting up references for DOM ndoes, we can set up references to handlers within a component, for example.
+
+`useRef` is defined by the React team as:
+
+```ts
+  function useRef<T>(initialValue: T): MutableRefObject<T>;
+```
+
+Very, very straightforward, but what's important here is to take a look at the `MutableRefObject` interface:
+
+```tsx
+  interface MutableRefObject<T> {
+    current: T;
+  }
+```
+
+The React team has a very good explanation as to how `useRef` works:
+
+> `useRef` returns a mutable ref object whose `.current` property is initialized to the passed argument (`initialValue`). The returned object will persist for the full lifetime of the component. Note that `useRef()` is useful for more than the `ref` attribute. It’s handy for keeping any mutable value around similar to how you’d use instance fields in classes.
+
+As mentioned above at the introduction of this section, and to emphasize what the Reac team has to say about `useRef`, we can use this hook to setup mutable values that will persist until the component is unmounted.
+
+Instead of providing a generic and simple example about using `useRef` to setup a reference to a DOM node you can find anywhere, let's have a look at relatively advanced yet simple applications of `useRef`, by using the previously referenced [hero-slider component](https://github.com/rmolinamir/hero-slider/blob/master/src/Slider/HeroSlider.tsx) in the `useMemo` section as a guide.
+
+In the hero-slider components, a couple features are available that use `useRef` to their advantage:
+
+The first feature are watchers to help both the autoplay instance of the hero-slider and the next, previous or specific slide setters dictate if they should change the slide, or wait until the slider is actually done sliding, and to also make them self-aware of which slide is active.
+
+We will use two references to achieve this. `activeSlideWatcher` and `isDoneSlidingWatcher` are a mutable objects that will persist for the full lifetime of the hero-slider component.
+
+- `isDoneSlidingWatcher` will serve as a pointer in case a `nextSlide` or any other event is called from an upper scope, like the autoplay instance.
+- `activeSlideWatcher` serves as a pointer to the `activeSlide` so that the auto play instance won't be out of sync with the current active slide. It is updated during the `useEffect` hooks subscribed to the `activeSlide` state variable whenever the user changes slide:
+
+```tsx
+  ...
+
+  const isDoneSlidingWatcher = React.useRef<boolean>(true)
+  const activeSlideWatcher = React.useRef<number>(activeSlide)
+
+  const autoplayInstanceRef = React.useRef((React.useMemo(() => {
+    return new IntervalTimer(autoplay, settings.autoplayDuration + slidingTimeoutDuration)
+  }, [])))
+  const autoplayInstance = autoplayInstanceRef.current
+
+  /**
+   * Update the respective watchers' current values.
+   */
+  React.useEffect(() => {
+    activeSlideWatcher.current = activeSlide
+  }, [activeSlide])
+  React.useEffect(() => {
+    isDoneSlidingWatcher.current = isDoneSliding
+  }, [isDoneSliding])
+
+  ...
+
+  /**
+   * `autoplay` is the callback sent to the autoplay instance.
+   */
+  const autoplay = (): void => {
+    const nextSlide = getNextSlide(activeSlideWatcher.current)
+    if (settings.isSmartSliding) {
+      smartAnimations(nextSlide)
+    }
+    changeSlide(getNextSlide(activeSlideWatcher.current))
+  }
+
+  /**
+   * `changeSlide` sets a new slide then executes `onSlidingHandler` to handle the smooth transition and
+   * set `isDoneSlidingWatcher.current` (a pointer) as true. While `isDoneSliding` is true, the
+   * slides won't change.
+   * The `onBeforeChange` event is executed here.
+   */
+  const changeSlide = (nextSlide: number): void => {
+    if (isDoneSlidingWatcher.current) {
+      if (props.onBeforeChange) {
+        props.onBeforeChange(activeSlideWatcher.current, nextSlide)
+      }
+      setActiveSlide(nextSlide)
+      onSlidingHandler(nextSlide)
+    }
+  }
+
+  ...
+```
+
+There is another incredible use-case scenario for `useRef`. By using a `useEffect` hook to work similarly to the `componentDidMount` lifecycle method by passing an empty dependencies list, we can run an initial setup for the hero-slider.
+
+In this initial setup, by passing unset `useRef` mutable objects as props down to the hero-slider component, we can set handlers from **within** our component so that these handlers can be used from an upper scope, as next or previous buttons for example.
+
+```tsx
+  ...
+
+  /**
+   * After mounting, akin to `componentDidMount`.
+   */
+  React.useEffect(() => {
+    activeSlideWatcher.current = activeSlide
+    /**
+     * Turn on autoplay if `props.shouldAutoplay` is true.
+     */
+    if (settings.shouldAutoplay) {
+      autoplayInstance.start()
+    }
+    /**
+     * Sets up the `nextSlide` and `previousSlide` reference object if they exist.
+     */
+    if (props.nextSlide) {
+      props.nextSlide.current = setNextSlide
+    }
+    if (props.previousSlide) {
+      props.previousSlide.current = setPreviousSlide
+    }
+    return () => {
+      ...
+      autoplayInstance.stop()
+    }
+  }, [])
+
+  ...
+```
+
+[Here's a link showcasing this particular example](https://www.robertmolina.dev/codelab/hero-slider#buttons). Notice how the initial `activeSlideWatcher.current` variable is also set up in here, which will change in the future whenever a slide changes, and the autoplay instance is started here as well (which is yet another reference).
 
 [⬆️ Back to top](#table-of-contents)<br>
 
