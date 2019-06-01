@@ -3420,7 +3420,7 @@ There are two worker functions declared as `getChildren` and `setSlides` that ca
 
 `useRef` is a hook commonly used to set up a reference to a DOM node. Unfortunately, most articles about this hook touch upon using `useRef` *only* to setup references to DOM nodes, as just previously mentioned. In reality, `useRef` sets a reference to a mutable object which is then paired to a DOM node, but, there are *a lot* of equally or even more useful applications.
 
-Before going into how we can apply `useRef` to achieve results other than DOM nodes, it is worth mentioning that `useRef` behaves very similarly to pointers. [In computer science, a *pointer* is defined as](https://en.wikipedia.org/wiki/Pointer_(computer_programming)):
+Before talking about different `useRef` applications other than DOM nodes, it is worth mentioning that `useRef` behaves very similarly to pointers. [In computer science, a *pointer* is defined as](https://en.wikipedia.org/wiki/Pointer_(computer_programming)):
 
 > A pointer references a location in memory, and obtaining the value stored at that location is known as dereferencing the pointer. As an analogy, a page number in a book's index could be considered a pointer to the corresponding page; dereferencing such a pointer would be done by flipping to the page with the given page number and reading the text found on that page.
 
