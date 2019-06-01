@@ -105,6 +105,7 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [useReducer](#usereducer)
           - [useCallback](#usecallback)
           - [useMemo](#usememo)
+          - [useRef](#useRef)
           - [useImperativeHandle](#useimperativehandle)
           - [useLayoutEffect](#useLayoutEffect)
           - [useDebugValue](#usedebugvalue)
