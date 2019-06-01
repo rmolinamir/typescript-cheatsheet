@@ -3095,29 +3095,29 @@ Next, let's apply define a `reducer` function and apply typing. Here's where the
 Let's now define our `initialState` variable, and our `useReducer` hook inside our input component, and then we'll plug everything up:
 
 ```tsx
-const MyInput = withContext(React.memo((props: IInputProps) => {
-  /**
-   * Input initial state, which dictates how it will behave (validation, validity, required, etc.).
-   */
-  const initialState: IInputState = {
-    identifier: props.identifier || (`${displayName}_${props.placeholder || props.type || 'default'}`),
-    value: props.value || '',
-    validationMessage: '',
-    valueType: props.valueType || props.placeholder && props.placeholder.toLowerCase(),
-    placeholder: props.placeholder,
-    validation: {
+  const MyInput = withContext(React.memo((props: IInputProps) => {
+    /**
+     * Input initial state, which dictates how it will behave (validation, validity, required, etc.).
+     */
+    const initialState: IInputState = {
+      identifier: props.identifier || (`${displayName}_${props.placeholder || props.type || 'default'}`),
+      value: props.value || '',
+      validationMessage: '',
+      valueType: props.valueType || props.placeholder && props.placeholder.toLowerCase(),
+      placeholder: props.placeholder,
+      validation: {
+        required: props.required || false,
+        email: props.type === 'email' && true, 
+        ...props.validation
+      },
       required: props.required || false,
-      email: props.type === 'email' && true, 
-      ...props.validation
-    },
-    required: props.required || false,
-    shouldValidate: Boolean(props.validation) || false,
-    valid: props.valid || false,
-    touched: props.touched || false
+      shouldValidate: Boolean(props.validation) || false,
+      valid: props.valid || false,
+      touched: props.touched || false
+    }
+    
+    const [state, dispatch] = React.useReducer<React.Reducer<IInputState, IReducerAction>>(reducer, initialState)
   }
-  
-  const [state, dispatch] = React.useReducer<React.Reducer<IInputState, IReducerAction>>(reducer, initialState)
-}
 ```
 
 Finally, let's plug everything up and see our reducer in action:
@@ -3268,6 +3268,45 @@ Finally, let's plug everything up and see our reducer in action:
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useCallback
+
+Both `useCallback` and `useMemo` are commonly compared to `shouldComponentUpdate`. This is because both of the previously mentioned hook return [*memoized*](https://en.wikipedia.org/wiki/Memoization) callbacks and values respectively. Memoization is basically caching the results of expensive functions in case they are executed again, and if so, then instead of executing the functions the cached values will be returned which in turn will increase performance.
+
+To summarize, they are commonly used to increase performance, which is the reason they're compared to `shouldComponentUpdate`, and, `useCallback` will be used for functions whereas `useMemo` will be used for values.
+
+`useCallback` is defined as:
+
+```ts
+  function useCallback<T extends (...args: any[]) => any>(callback: T, deps: DependencyList): T;
+```
+
+As you can see, it's very simply. Notice the following:
+
+1. It is defined by `T`, which extends to a function that accepts any number of arguments of `any` type, and can return values of `any` types. Basically, any function.
+2. As a second argument, it accepts a dependency list. This dependency list is nothing more than a read only array that the hook will subscribe to. If any of them change, the hook will execute. `DependencyList` is defined as:
+
+```ts
+  type DependencyList = ReadonlyArray<any>;
+```
+
+Remember that `ReadonlyArray` is a native TypeScript type. Moving on, using `useCallback` in TypeScript is very easy since it's configured to accept `any` types. Here's a simple yet shallow example of a real-life application of `useCallback`.
+
+The following `useCallback` application will return a function that will be *throttled* in a later hook (which is actually featured in the custom hooks section). This function will execute whenever the user scrolls through the page, and will mix two colors depending on where the user is and depending on which RBG channels colors should be mixed. Finally, the new mixed color is set through the `setBackgroundColor` dispatcher.
+
+```ts
+  const onThrottledScrollHandler = useCallback(() => {
+    const currentScrollHeight = window.pageYOffset;
+    const [colorOne, colorTwo] = colors;
+    const mixRatio = currentScrollHeight / scrollHeight;
+    const mixedColor = mixColors(
+      [colorOne, colorTwo],
+      mixRatioNumberToTriple(mixRatio, mixRatioChannels)
+    );
+    setBackgroundColor(mixedColor);
+  }, [backgroundColor, colors, scrollHeigh, mixRatioChannels]);
+
+  const throttled = useThrottle(onThrottledScrollHandler, throttleLimit);
+  ...
+```
 
 [⬆️ Back to top](#table-of-contents)<br>
 
