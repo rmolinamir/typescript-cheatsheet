@@ -3269,7 +3269,7 @@ Finally, let's plug everything up and see our reducer in action:
 
 ### useCallback
 
-Both `useCallback` and `useMemo` are commonly compared to `shouldComponentUpdate`. This is because both of the previously mentioned hook return [*memoized*](https://en.wikipedia.org/wiki/Memoization) callbacks and values respectively. Memoization is basically caching the results of expensive functions in case they are executed again, and if so, then instead of executing the functions the cached values will be returned which in turn will increase performance.
+Both `useCallback` and `useMemo` are commonly compared to `shouldComponentUpdate`. This is because both of the previously mentioned hook return [*memoized*](https://en.wikipedia.org/wiki/Memoization) callbacks and values respectively. Memoization is basically caching the results of expensive functions in case they are executed again, and if so, then the cached values will be returned instead of executing the functions, which in turn will increase performance.
 
 To summarize, they are commonly used to increase performance, which is the reason they're compared to `shouldComponentUpdate`, and, `useCallback` will be used for functions whereas `useMemo` will be used for values.
 
@@ -3311,6 +3311,107 @@ The following `useCallback` application will return a function that will be *thr
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useMemo
+
+Very similar to `useCallback`. As mentioned previously, `useMemo` is commonly compared to `shouldComponentUpdate`.
+
+> This is because both of the previously mentioned hook return [*memoized*](https://en.wikipedia.org/wiki/Memoization) callbacks and values respectively. Memoization is basically caching the results of expensive functions in case they are executed again, and if so, then the cached values will be returned instead of executing the functions, which in turn will increase performance.
+
+Instead of returning a function as `useCallback` does, `useMemo` will return a value. The React team defines `useMemo` as:
+
+```ts
+  function useMemo<T>(factory: () => T, deps: DependencyList | undefined): T;
+```
+
+Same as every single hook shown before, generics are dominant. `useMemo` will take a *factory* or *create* function that returns a value of type `T` (think of React components, for example), and a dependency list to subscribe to. If any of the values in the list change, the hook will execute again. Otherwise it'll simply return the cached result!
+
+`useMemo` is a very, very useful hook. It can be implemented in many, many places within any application to improve performances. Here are some very simple examples of `useMemo` used inside [this hero slider component](https://github.com/rmolinamir/hero-slider/blob/master/src/Slider/HeroSlider.tsx).
+
+There are two worker functions declared as `getChildren` and `setSlides` that can potentially be performance expensive. These functions will filter the `React.Children` props, and filter them to set up the slides of the hero slider according to the previously set settings. By using `useMemo`, we can memoize the initial returned values, so that every time these functions are executed in the future, the memoized values will be returned instead, and thus increasing performance.
+
+```tsx
+  const heroSlider = React.memo((props: ISliderProps) => {
+    ...
+
+    /**
+     * `getChildren` will categorize the `props.children` elements array into the `children` object.
+     */
+    const getChildren = (): IChildren => {
+      const children: IChildren = {
+        slidesArray: [],
+        navbarsArray: [],
+        autoplayButtonsArray: [],
+        othersArray: [],
+        navDescriptions: []
+      }
+      React.Children.toArray(props.children).forEach(child => {
+        if (typeof child.type === 'function' && React.isValidElement(child)) {
+          // tslint:disable-next-line:variable-name
+          const RFC_Child: React.FunctionComponent = child.type as React.FunctionComponent
+          const displayName = RFC_Child.displayName
+          switch (displayName) {
+            case 'hero-slider/slide':
+              const props = child.props as ISlideProps
+              children.navDescriptions.push(props.navDescription)
+              return children.slidesArray.push(child)
+            case 'hero-slider/nav':
+            case 'hero-slider/menu-nav':
+              return children.navbarsArray.push(child)
+            case 'hero-slider/autoplay-button':
+              return children.autoplayButtonsArray.push(child)
+            default:
+              return children.othersArray.push(child)
+          }
+        }
+        return children.othersArray.push(child)
+      })
+      return children
+    }
+
+    /**
+     * `setSlides` clones the necessary properties for each slide to work.
+     */
+    const setSlides = () => {
+      return React.Children.map(slidesArray, (child, index) => {
+        const currentSlide = index + 1
+        return (
+          React.cloneElement(
+            child as React.ReactElement<ISlideProps>,
+            {
+              isActive: activeSlide === currentSlide,
+              isDoneSliding: isDoneSliding,
+              slidingAnimation: settings.slidingAnimation
+            }
+          )
+        )
+      })
+    }
+
+    /**
+     * Sets up initial slides array, `useMemo` is used for performance optimization since a loop is
+     * ran inside `getChildren`.
+     */
+    const children: IChildren = React.useMemo(() => {
+      return getChildren()
+    }, [])
+
+    /**
+     * Performance optimization to avoid re-rendering after mouse over captures.
+     * Only updates if `activeSlide` or `isDoneSliding` change.
+     */
+    const slides = React.useMemo(() => {
+      return children.slidesArray && setSlides()
+    }, [activeSlide, isDoneSliding])
+
+    return (
+      <div
+        {...}
+      >
+        {slides}
+        {...}
+      </div>
+    );
+  }
+```
 
 [⬆️ Back to top](#table-of-contents)<br>
 
