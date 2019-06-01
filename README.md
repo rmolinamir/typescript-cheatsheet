@@ -3440,7 +3440,7 @@ Very, very straightforward, but what's important here is to take a look at the `
   }
 ```
 
-The React team has a very good explanation as to how `useRef` works:
+It is quite literally just an object defined as `{ current: T }`. Where `T`, can be anything. The React team has a very good explanation as to how `useRef` works:
 
 > `useRef` returns a mutable ref object whose `.current` property is initialized to the passed argument (`initialValue`). The returned object will persist for the full lifetime of the component. Note that `useRef()` is useful for more than the `ref` attribute. It’s handy for keeping any mutable value around similar to how you’d use instance fields in classes.
 
