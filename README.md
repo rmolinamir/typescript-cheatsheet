@@ -3640,7 +3640,7 @@ It is worth noting that this hook is very rarely used. It is necessary for very 
 
 One scenario where the program might need to wait for the initial rendering, is when there are DOM calculations that must be ran before displaying the components. For example, think of a self-aware popover tooltip that renders towards the center of the page depending on where it's placed at.
 
-Here's how the React team defined `useLayoutEffect` (which is literally identical to the definition of `useEffect`), and what do they have to say about it:
+Here's how the React team defines `useLayoutEffect` (which is literally identical to the definition of `useEffect`), and what do they have to say about it:
 
 ```tsx
   function useLayoutEffect(effect: EffectCallback, deps?: DependencyList): void;
@@ -3653,6 +3653,42 @@ If you’re migrating code from a class component, `useLayoutEffect` fires in th
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useDebugValue
+
+[`useDebugValue` can be used to display a label for custom hooks in React DevTools.](https://reactjs.org/docs/hooks-reference.html#useimperativehandle)
+
+As this is exclusively used for custom hooks, it's recommended by the React team to only use it for hooks that are part of shared libraries.
+
+`useDebugValue` is defined as:
+
+```tsx
+  function useDebugValue<T>(value: T, format?: (value: T) => any): void;
+```
+
+The `value` argument is what will be displayed next to its respective label in the *Elements* tab of the React DevTools.
+
+Sometimes though, formatting values might be an expensive operation as noted in the official documentation. For this reason the second parameter `format` exists, where it essentially allows you to access formatting methods, such as:
+
+```tsx
+useDebugValue(date, date => date.toDateString());
+```
+
+Here's an example showcased in the official documentation about `useDebugValue`:
+
+```tsx
+function useFriendStatus(friendID) {
+  const [isOnline, setIsOnline] = useState(null);
+
+  // ...
+
+  // Show a label in DevTools next to this Hook
+  // e.g. "FriendStatus: Online"
+  useDebugValue(isOnline ? 'Online' : 'Offline');
+
+  return isOnline;
+}
+```
+
+The label shown in the React DevTools will be the name of the function without the "use" prefix of hooks. The example above would result in: **"FriendStatus: Online"**.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
@@ -3674,7 +3710,7 @@ And thank you very much for taking the time to do so 💖
 
 ## Collaborators
 
-This is a (currently not so big) list of all the awesome collaborators of the TypeScript Cheatsheet:
+This is a (currently not so big) list of all the awesome collaborators (present or past) of the TypeScript Cheatsheet:
 
 - [*evdama*](https://github.com/evdama) 🥇
 
