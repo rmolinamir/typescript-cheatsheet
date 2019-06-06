@@ -3634,6 +3634,22 @@ Notice how the `AutofocusedInput` component focuses on functionality with almost
 
 ### useLayoutEffect
 
+`useLayoutEffect` is very similar to `useEffect`, the difference is that the initial execution of `useLayoutEffect` is a bit delayed, specifically fired in [the same phase as componentDidMount and componentDidUpdate](https://reactjs.org/docs/hooks-reference.html#useimperativehandle).
+
+It is worth noting that this hook is very rarely used. It is necessary for very specific use-case scenarios where the program needs to wait for the initial rendering.
+
+One scenario where the program might need to wait for the initial rendering, is when there are DOM calculations that must be ran before displaying the components. For example, think of a self-aware popover tooltip that renders towards the center of the page depending on where it's placed at.
+
+Here's how the React team defined `useLayoutEffect` (which is literally identical to the definition of `useEffect`), and what do they have to say about it:
+
+```tsx
+  function useLayoutEffect(effect: EffectCallback, deps?: DependencyList): void;
+```
+
+> The signature is identical to `useEffect`, but it fires synchronously after all DOM mutations. **Use this to read layout from the DOM and synchronously re-render. Updates scheduled inside `useLayoutEffect` will be flushed synchronously, before the browser has a chance to paint.**
+Prefer the standard `useEffect` when possible to avoid blocking visual updates.
+If you’re migrating code from a class component, `useLayoutEffect` fires in the same phase as `componentDidMount` and `componentDidUpdate`.
+
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useDebugValue
