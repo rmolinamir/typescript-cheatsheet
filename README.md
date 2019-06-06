@@ -105,7 +105,7 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [useReducer](#usereducer)
           - [useCallback](#usecallback)
           - [useMemo](#usememo)
-          - [useRef](#useRef)
+          - [useRef](#useref)
           - [useImperativeHandle](#useimperativehandle)
           - [useLayoutEffect](#useLayoutEffect)
           - [useDebugValue](#usedebugvalue)
@@ -3551,6 +3551,84 @@ In this initial setup, by passing unset `useRef` mutable objects as props down t
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useImperativeHandle
+
+`useImperativeHandle` is **very rarely** used. This hook exposes the instantiated custom value of a React reference to parent components ([more details in `useRef`](#useref)). This means that you can setup a React reference object, customize it in any way possible, e.g. adding methods, then forward it with `React.forwardRef`. If a parent component then creates a reference then "hooks" it to the child component, the parent component will have access to the reference.
+
+Here's what the React team has to say about this hook:
+
+> `useImperativeHandle` customizes the instance value that is exposed to parent components when using:
+    - `ref`. As always, imperative code using refs should be avoided in most cases.
+    - `useImperativeHandle` should be used with `React.forwardRef`.
+
+`useImperativeHandle` is defined by the React team as:
+
+```tsx
+  function useImperativeHandle<T, R extends T>(
+    ref: Ref<T>|undefined,
+    init: () => R,
+    deps?: DependencyList
+  ): void;
+```
+
+Where:
+
+1. `ref` is the React `RefObject<T>`.
+2. `init` the common hook initialize function as used in other hooks as well.
+3. `deps` is the dependency list of variables used in `init` that the hook will subscribe to.
+
+[Here's an example that uses the react hooks example about `useImperativeHandle` as a guideline](https://reactjs.org/docs/hooks-reference.html#useimperativehandle).
+
+First, let's define a component that uses `useImperativeHandle` then apply `forwardRef` on it to expose the `ref` object:
+
+```tsx
+  interface IInputRefObject {
+    exposedFocusMethod (): void
+  }
+
+  interface IInputProps {
+    [propName: string]: any;
+  }
+
+  const Input: React.RefForwardingComponent<IInputRefObject, IInputProps> = (props, ref) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    useImperativeHandle(ref, () => ({
+      exposedFocusMethod: () => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+          /// Possibly more logic
+        };
+      }
+    }));
+    return <input ref={inputRef} {...props} />;
+  }
+  
+  const ImperativeInput = forwardRef(Input);
+  export default ImperativeInput;
+```
+
+Now let's use it in a parent component, and access `ref`:
+
+```tsx
+  interface IAutofocusProps {
+    shouldFocusOnMount: boolean;
+    [propName: string]: any;
+  }
+
+  const AutofocusedInput = (props: IAutofocusProps) => {
+    const { shouldFocusOnMount = true, ...rest } = props;
+    const myInputRef = useRef<IInputRefObject>(null);
+
+    useEffect(() => {
+      if (shouldFocusOnMount && myInputRef.current) {
+        myInputRef.current.exposedFocusMethod();
+      }
+    }, [shouldFocusOnMount]);
+
+    return <ImperativeInput ref={myInputRef} {...rest} />
+  }
+```
+
+Notice how the `AutofocusedInput` component focuses on functionality with almost no declarations. The `focus` propety of the `ImperativeInput` component's DOM node is not directly executed inside `AutofocusedInput`, instead we are executing the exposed method declared as `exposedFocusMethod`, which then executes `focus`. This is why the React team named this hook as `useImperativeHandle`. In computer science, imperative programming [focuses on what the program should accomplish without specifying how the program should achieve the result](https://en.wikipedia.org/wiki/Imperative_programming).
 
 [⬆️ Back to top](#table-of-contents)<br>
 
