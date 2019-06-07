@@ -3694,6 +3694,152 @@ The label shown in the React DevTools will be the name of the function without t
 
 ### Custom Hooks
 
+As shown in `useDebugValue`, hooks are expected to be declared with variable names prefixed by "use". In this section, the most important factors to keep in mind when creating a custom hook will be emphasized, however, [definitely check the official documentation for more general information](https://reactjs.org/docs/hooks-custom.html).
+
+> Custom Hooks offer the flexibility of sharing logic that wasn’t possible in React components before. You can write custom Hooks that cover a wide range of use cases like form handling, animation, declarative subscriptions, timers, and probably many more we haven’t considered. What’s more, you can build Hooks that are just as easy to use as React’s built-in features.
+
+There is literally an infinite amount of different custom hooks we can create. For this reason, it is extremely important to be consistent with them. Any custom hooks should be developed in a way that is consistent with the new functional paradigm imposed by the React team as shown in the prepacked React hooks such as `useState`, and `useEffect`.
+
+Here are three pointers worth quoting from the React official documentation about custom hooks:
+
+> **Do I have to name my custom Hooks starting with “use”?** Please do. This convention is very important. Without it, we wouldn’t be able to automatically check for violations of rules of Hooks because we couldn’t tell if a certain function contains calls to Hooks inside of it.
+> **Do two components using the same Hook share state?** No. Custom Hooks are a mechanism to reuse stateful logic (such as setting up a subscription and remembering the current value), but every time you use a custom Hook, all state and effects inside of it are fully isolated.
+
+And finaly, paraphrasing the third point:
+
+> **How does a custom Hook get isolated state?** Each call to a Hook gets isolated state. Because we call a custom hook directly, from React’s point of view our component just calls any hooks that might be used inside the custom hook, such as `useState` and `useEffect`. And as we learned earlier, we can call `useState` and `useEffect` many times in one component, and they will be completely independent.
+
+To summarize, be consistent. Do you want to declare a state that involves additional functionality not offered by `useState`? Make sure to return a value, and possibly a dispatcher too. Do you want to handle side-effects based on `useEffect`? Pass a dependency list, or even just a single dispatcher [to pass a minimal amount of dependencies as mentioned here by Dan Abramov](https://github.com/facebook/create-react-app/issues/6880#issuecomment-488158024).
+
+Let's now do our first two custom hooks!
+
+First, let's begin by developing a hook that can throttle **any** callback, within a specified and limited (minimum) amount of time between function calls. Basically, a custom hook used to throttle function callbacks. It will be declared as `useThrottled` and it will accept a `callback` as its first parameter, and a `limit` as its second parameter.
+
+- `callback` can and will be *any* callback that is passed to the hook, and it will **only be executed if the amount of time between the current and last function call is higher than `limit`**.
+- `limit` will be the minimum time required to wait between callbacks.
+
+```tsx
+  import React from "react";
+  const { useState } = React;
+
+  export const useThrottle = (
+    callback: () => void,
+    limit: number
+  ): (() => void) => {
+    const [callbackTimeoutId, setCallbackTimeoutId] = useState<number>();
+    const [lastCallbackRunDate, setLastCallbackRunDate] = useState<number>();
+    return () => {
+      if (!lastCallbackRunDate) {
+        setLastCallbackRunDate(Date.now());
+      } else {
+        clearTimeout(Number(callbackTimeoutId));
+        setCallbackTimeoutId(
+          setTimeout(() => {
+            if (Date.now() - lastCallbackRunDate >= limit) {
+              callback();
+              setLastCallbackRunDate(Date.now());
+            }
+          }, limit - (Date.now() - lastCallbackRunDate))
+        );
+      }
+    };
+  };
+```
+
+The `callback` parameter will **only** execute if the difference between the current date and the last time the callback fire is higher than the throttle limit.
+
+Next, let's develop a hook that handles the scroll event callbacks while also throttling them. We will call this hook `useScrollCallback`:
+
+```tsx
+  import React from "react";
+
+  // Dependencies
+  import { useThrottle } from "../useThrottle";
+  const { useState, useCallback, useEffect } = React;
+
+  export const useScrollCallback = (
+    minimumOffset: number = 50, // Minimum height offset to actually execute the callback
+    throttleLimit: number = 500, // Minimum time between calls in milliseconds
+    callback: (scrollPosition: number) => void
+  ) => {
+    const [scrollPosition, setScrollPosition] = useState<number>(
+      window.pageYOffset
+    );
+
+    const onThrottledScrollHandler = useCallback(() => {
+      const currentScrollHeight = window.pageYOffset;
+      setScrollPosition(currentScrollHeight);
+      if (currentScrollHeight > minimumOffset) callback(scrollPosition);
+    }, [minimumOffset, callback, scrollPosition]);
+
+    const throttled = useThrottle(onThrottledScrollHandler, throttleLimit);
+
+    useEffect(() => {
+      window.addEventListener("scroll", throttled);
+
+      // Return clause.
+      return () => window.removeEventListener("scroll", throttled);
+    }, [throttled]);
+  };
+```
+
+Throttling is a very important concept to keep in mind. Even more so in this case when using the scroll event listener because of how often it fires. By throttling it, we are increasing performance significantly. Let's now create our `App` container to put everything together:
+
+```tsx
+  // Libraries
+  import * as React from "react";
+  import { render } from "react-dom";
+
+  // Global styles
+  import "./styles.css";
+
+  // Hooks
+  import { useScrollCallback } from "./hooks/useOnScrollCallback";
+
+  // Dependencies
+  import randomColor from "randomcolor";
+  const minimumOffset: number = 0; // Minimum height offset to actually execute the callback
+  const throttleLimit: number = 500; // Minimum time between calls in milliseconds
+
+  function App() {
+    /**
+    * We're randomly changing the color of the body when scrolling!
+    */
+    useScrollCallback(minimumOffset, throttleLimit, (scrollPosition: number) => {
+      console.log(`I'm currently scrolling at ${scrollPosition}!`);
+      document.body.style.backgroundColor = randomColor({
+        luminosity: "light",
+        format: "hsla" // e.g. 'hsla(27, 88.99%, 81.83%, 0.6450211517512798)'
+      });
+    });
+    return (
+      <div className="App">
+        <div className="fixed">
+          <h1>
+            Open the console and scroll the page to see the throttling in action!
+          </h1>
+          <h1>
+            Feel free to experiment by changing the throttle limit to see a change in the frequency of the callbacks.
+          </h1>
+        </div>
+        <div className="empty-space" />
+      </div>
+    );
+  }
+
+  const rootElement = document.getElementById("root");
+  render(<App />, rootElement);
+```
+
+And that's it! A couple of things are worth pointing out:
+
+- Did you notice how `useThrottled` returns a function similar to `useCallback`, but with extra functionality, yet still following the new paradigm?
+- Did you also notice how `useScrollCallback` handles side-effects only, similar to `useEffect` without a dependency list?
+
+The key to creating custom hooks is to keep them as consistent as possible with the new functional mindset the React team is pushing, keep that in mind! Here's the example hosted in CodeSandbox with a few more functionalities. Feel free to fork it as well.
+
+[![Custom Hooks example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/custom-hooks-example-68n7l?fontsize=14)
+
 [⬆️ Back to top](#table-of-contents)<br>
 
 ---
