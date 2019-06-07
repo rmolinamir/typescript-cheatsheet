@@ -105,7 +105,7 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
           - [useReducer](#usereducer)
           - [useCallback](#usecallback)
           - [useMemo](#usememo)
-          - [useRef](#useRef)
+          - [useRef](#useref)
           - [useImperativeHandle](#useimperativehandle)
           - [useLayoutEffect](#useLayoutEffect)
           - [useDebugValue](#usedebugvalue)
@@ -3552,17 +3552,293 @@ In this initial setup, by passing unset `useRef` mutable objects as props down t
 
 ### useImperativeHandle
 
+`useImperativeHandle` is **very rarely** used. This hook exposes the instantiated custom value of a React reference to parent components ([more details in `useRef`](#useref)). This means that you can setup a React reference object, customize it in any way possible, e.g. adding methods, then forward it with `React.forwardRef`. If a parent component then creates a reference then "hooks" it to the child component, the parent component will have access to the reference.
+
+Here's what the React team has to say about this hook:
+
+> `useImperativeHandle` customizes the instance value that is exposed to parent components when using:
+    - `ref`. As always, imperative code using refs should be avoided in most cases.
+    - `useImperativeHandle` should be used with `React.forwardRef`.
+
+`useImperativeHandle` is defined by the React team as:
+
+```tsx
+  function useImperativeHandle<T, R extends T>(
+    ref: Ref<T>|undefined,
+    init: () => R,
+    deps?: DependencyList
+  ): void;
+```
+
+Where:
+
+1. `ref` is the React `RefObject<T>`.
+2. `init` the common hook initialize function as used in other hooks as well.
+3. `deps` is the dependency list of variables used in `init` that the hook will subscribe to.
+
+[Here's an example that uses the react hooks example about `useImperativeHandle` as a guideline](https://reactjs.org/docs/hooks-reference.html#useimperativehandle).
+
+First, let's define a component that uses `useImperativeHandle` then apply `forwardRef` on it to expose the `ref` object:
+
+```tsx
+  interface IInputRefObject {
+    exposedFocusMethod (): void
+  }
+
+  interface IInputProps {
+    [propName: string]: any;
+  }
+
+  const Input: React.RefForwardingComponent<IInputRefObject, IInputProps> = (props, ref) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+    useImperativeHandle(ref, () => ({
+      exposedFocusMethod: () => {
+        if (inputRef.current) {
+          inputRef.current.focus();
+          /// Possibly more logic
+        };
+      }
+    }));
+    return <input ref={inputRef} {...props} />;
+  }
+  
+  const ImperativeInput = forwardRef(Input);
+  export default ImperativeInput;
+```
+
+Now let's use it in a parent component, and access `ref`:
+
+```tsx
+  interface IAutofocusProps {
+    shouldFocusOnMount: boolean;
+    [propName: string]: any;
+  }
+
+  const AutofocusedInput = (props: IAutofocusProps) => {
+    const { shouldFocusOnMount = true, ...rest } = props;
+    const myInputRef = useRef<IInputRefObject>(null);
+
+    useEffect(() => {
+      if (shouldFocusOnMount && myInputRef.current) {
+        myInputRef.current.exposedFocusMethod();
+      }
+    }, [shouldFocusOnMount]);
+
+    return <ImperativeInput ref={myInputRef} {...rest} />
+  }
+```
+
+Notice how the `AutofocusedInput` component focuses on functionality with almost no declarations. The `focus` propety of the `ImperativeInput` component's DOM node is not directly executed inside `AutofocusedInput`, instead we are executing the exposed method declared as `exposedFocusMethod`, which then executes `focus`. This is why the React team named this hook as `useImperativeHandle`. In computer science, imperative programming [focuses on what the program should accomplish without specifying how the program should achieve the result](https://en.wikipedia.org/wiki/Imperative_programming).
+
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useLayoutEffect
+
+`useLayoutEffect` is very similar to `useEffect`, the difference is that the initial execution of `useLayoutEffect` is a bit delayed, specifically fired in [the same phase as componentDidMount and componentDidUpdate](https://reactjs.org/docs/hooks-reference.html#useimperativehandle).
+
+It is worth noting that this hook is very rarely used. It is necessary for very specific use-case scenarios where the program needs to wait for the initial rendering.
+
+One scenario where the program might need to wait for the initial rendering, is when there are DOM calculations that must be ran before displaying the components. For example, think of a self-aware popover tooltip that renders towards the center of the page depending on where it's placed at.
+
+Here's how the React team defines `useLayoutEffect` (which is literally identical to the definition of `useEffect`), and what do they have to say about it:
+
+```tsx
+  function useLayoutEffect(effect: EffectCallback, deps?: DependencyList): void;
+```
+
+> The signature is identical to `useEffect`, but it fires synchronously after all DOM mutations. **Use this to read layout from the DOM and synchronously re-render. Updates scheduled inside `useLayoutEffect` will be flushed synchronously, before the browser has a chance to paint.**
+Prefer the standard `useEffect` when possible to avoid blocking visual updates.
+If you’re migrating code from a class component, `useLayoutEffect` fires in the same phase as `componentDidMount` and `componentDidUpdate`.
 
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### useDebugValue
 
+[`useDebugValue` can be used to display a label for custom hooks in React DevTools.](https://reactjs.org/docs/hooks-reference.html#useimperativehandle)
+
+As this is exclusively used for custom hooks, it's recommended by the React team to only use it for hooks that are part of shared libraries.
+
+`useDebugValue` is defined as:
+
+```tsx
+  function useDebugValue<T>(value: T, format?: (value: T) => any): void;
+```
+
+The `value` argument is what will be displayed next to its respective label in the *Elements* tab of the React DevTools.
+
+Sometimes though, formatting values might be an expensive operation as noted in the official documentation. For this reason the second parameter `format` exists, where it essentially allows you to access formatting methods, such as:
+
+```tsx
+useDebugValue(date, date => date.toDateString());
+```
+
+Here's an example showcased in the official documentation about `useDebugValue`:
+
+```tsx
+function useFriendStatus(friendID) {
+  const [isOnline, setIsOnline] = useState(null);
+
+  // ...
+
+  // Show a label in DevTools next to this Hook
+  // e.g. "FriendStatus: Online"
+  useDebugValue(isOnline ? 'Online' : 'Offline');
+
+  return isOnline;
+}
+```
+
+The label shown in the React DevTools will be the name of the function without the "use" prefix of hooks. The example above would result in: **"FriendStatus: Online"**.
+
 [⬆️ Back to top](#table-of-contents)<br>
 
 ### Custom Hooks
+
+As shown in `useDebugValue`, hooks are expected to be declared with variable names prefixed by "use". In this section, the most important factors to keep in mind when creating a custom hook will be emphasized, however, [definitely check the official documentation for more general information](https://reactjs.org/docs/hooks-custom.html).
+
+> Custom Hooks offer the flexibility of sharing logic that wasn’t possible in React components before. You can write custom Hooks that cover a wide range of use cases like form handling, animation, declarative subscriptions, timers, and probably many more we haven’t considered. What’s more, you can build Hooks that are just as easy to use as React’s built-in features.
+
+There is literally an infinite amount of different custom hooks we can create. For this reason, it is extremely important to be consistent with them. Any custom hooks should be developed in a way that is consistent with the new functional paradigm imposed by the React team as shown in the prepacked React hooks such as `useState`, and `useEffect`.
+
+Here are three pointers worth quoting from the React official documentation about custom hooks:
+
+> **Do I have to name my custom Hooks starting with “use”?** Please do. This convention is very important. Without it, we wouldn’t be able to automatically check for violations of rules of Hooks because we couldn’t tell if a certain function contains calls to Hooks inside of it.
+> **Do two components using the same Hook share state?** No. Custom Hooks are a mechanism to reuse stateful logic (such as setting up a subscription and remembering the current value), but every time you use a custom Hook, all state and effects inside of it are fully isolated.
+
+And finaly, paraphrasing the third point:
+
+> **How does a custom Hook get isolated state?** Each call to a Hook gets isolated state. Because we call a custom hook directly, from React’s point of view our component just calls any hooks that might be used inside the custom hook, such as `useState` and `useEffect`. And as we learned earlier, we can call `useState` and `useEffect` many times in one component, and they will be completely independent.
+
+To summarize, be consistent. Do you want to declare a state that involves additional functionality not offered by `useState`? Make sure to return a value, and possibly a dispatcher too. Do you want to handle side-effects based on `useEffect`? Pass a dependency list, or even just a single dispatcher [to pass a minimal amount of dependencies as mentioned here by Dan Abramov](https://github.com/facebook/create-react-app/issues/6880#issuecomment-488158024).
+
+Let's now do our first two custom hooks!
+
+First, let's begin by developing a hook that can throttle **any** callback, within a specified and limited (minimum) amount of time between function calls. Basically, a custom hook used to throttle function callbacks. It will be declared as `useThrottled` and it will accept a `callback` as its first parameter, and a `limit` as its second parameter.
+
+- `callback` can and will be *any* callback that is passed to the hook, and it will **only be executed if the amount of time between the current and last function call is higher than `limit`**.
+- `limit` will be the minimum time required to wait between callbacks.
+
+```tsx
+  import React from "react";
+  const { useState } = React;
+
+  export const useThrottle = (
+    callback: () => void,
+    limit: number
+  ): (() => void) => {
+    const [callbackTimeoutId, setCallbackTimeoutId] = useState<number>();
+    const [lastCallbackRunDate, setLastCallbackRunDate] = useState<number>();
+    return () => {
+      if (!lastCallbackRunDate) {
+        setLastCallbackRunDate(Date.now());
+      } else {
+        clearTimeout(Number(callbackTimeoutId));
+        setCallbackTimeoutId(
+          setTimeout(() => {
+            if (Date.now() - lastCallbackRunDate >= limit) {
+              callback();
+              setLastCallbackRunDate(Date.now());
+            }
+          }, limit - (Date.now() - lastCallbackRunDate))
+        );
+      }
+    };
+  };
+```
+
+The `callback` parameter will **only** execute if the difference between the current date and the last time the callback fire is higher than the throttle limit.
+
+Next, let's develop a hook that handles the scroll event callbacks while also throttling them. We will call this hook `useScrollCallback`:
+
+```tsx
+  import React from "react";
+
+  // Dependencies
+  import { useThrottle } from "../useThrottle";
+  const { useState, useCallback, useEffect } = React;
+
+  export const useScrollCallback = (
+    minimumOffset: number = 50, // Minimum height offset to actually execute the callback
+    throttleLimit: number = 500, // Minimum time between calls in milliseconds
+    callback: (scrollPosition: number) => void
+  ) => {
+    const [scrollPosition, setScrollPosition] = useState<number>(
+      window.pageYOffset
+    );
+
+    const onThrottledScrollHandler = useCallback(() => {
+      const currentScrollHeight = window.pageYOffset;
+      setScrollPosition(currentScrollHeight);
+      if (currentScrollHeight > minimumOffset) callback(scrollPosition);
+    }, [minimumOffset, callback, scrollPosition]);
+
+    const throttled = useThrottle(onThrottledScrollHandler, throttleLimit);
+
+    useEffect(() => {
+      window.addEventListener("scroll", throttled);
+
+      // Return clause.
+      return () => window.removeEventListener("scroll", throttled);
+    }, [throttled]);
+  };
+```
+
+Throttling is a very important concept to keep in mind. Even more so in this case when using the scroll event listener because of how often it fires. By throttling it, we are increasing performance significantly. Let's now create our `App` container to put everything together:
+
+```tsx
+  // Libraries
+  import * as React from "react";
+  import { render } from "react-dom";
+
+  // Global styles
+  import "./styles.css";
+
+  // Hooks
+  import { useScrollCallback } from "./hooks/useOnScrollCallback";
+
+  // Dependencies
+  import randomColor from "randomcolor";
+  const minimumOffset: number = 0; // Minimum height offset to actually execute the callback
+  const throttleLimit: number = 500; // Minimum time between calls in milliseconds
+
+  function App() {
+    /**
+    * We're randomly changing the color of the body when scrolling!
+    */
+    useScrollCallback(minimumOffset, throttleLimit, (scrollPosition: number) => {
+      console.log(`I'm currently scrolling at ${scrollPosition}!`);
+      document.body.style.backgroundColor = randomColor({
+        luminosity: "light",
+        format: "hsla" // e.g. 'hsla(27, 88.99%, 81.83%, 0.6450211517512798)'
+      });
+    });
+    return (
+      <div className="App">
+        <div className="fixed">
+          <h1>
+            Open the console and scroll the page to see the throttling in action!
+          </h1>
+          <h1>
+            Feel free to experiment by changing the throttle limit to see a change in the frequency of the callbacks.
+          </h1>
+        </div>
+        <div className="empty-space" />
+      </div>
+    );
+  }
+
+  const rootElement = document.getElementById("root");
+  render(<App />, rootElement);
+```
+
+And that's it! A couple of things are worth pointing out:
+
+- Did you notice how `useThrottled` returns a function similar to `useCallback`, but with extra functionality, yet still following the new paradigm?
+- Did you also notice how `useScrollCallback` handles side-effects only, similar to `useEffect` without a dependency list?
+
+The key to creating custom hooks is to keep them as consistent as possible with the new functional mindset the React team is pushing, keep that in mind! Here's the example hosted in CodeSandbox with a few more functionalities. Feel free to fork it as well.
+
+[![Custom Hooks example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/custom-hooks-example-68n7l?fontsize=14)
 
 [⬆️ Back to top](#table-of-contents)<br>
 
@@ -3580,7 +3856,7 @@ And thank you very much for taking the time to do so 💖
 
 ## Collaborators
 
-This is a (currently not so big) list of all the awesome collaborators of the TypeScript Cheatsheet:
+This is a (currently not so big) list of all the awesome collaborators (present or past) of the TypeScript Cheatsheet:
 
 - [*evdama*](https://github.com/evdama) 🥇
 
