@@ -3836,9 +3836,11 @@ And that's it! A couple of things are worth pointing out:
 - Did you notice how `useThrottled` returns a function similar to `useCallback`, but with extra functionality, yet still following the new paradigm?
 - Did you also notice how `useScrollCallback` handles side-effects only, similar to `useEffect` without a dependency list?
 
-The key to creating custom hooks is to keep them as consistent as possible with the new functional mindset the React team is pushing, keep that in mind! Here's the example hosted in CodeSandbox with a few more functionalities. Feel free to fork it as well.
+The key to creating custom hooks is to keep them as consistent as possible with the new functional mindset the React team is pushing, keep that in mind!
 
-[![Custom Hooks example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/custom-hooks-example-68n7l?fontsize=14)
+Here's the example hosted in CodeSandbox of the hooks shown above, with a few more functionalities to play around with them. Feel free to fork it as well.
+
+[![Custom Hooks example](https://codesandbox.io/static/img/play-codesandbox.svg)](https://codesandbox.io/s/custom-hooks-example-68n7l?fontsize=14)  
 
 [⬆️ Back to top](#table-of-contents)<br>
 
