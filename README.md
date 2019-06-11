@@ -2674,7 +2674,7 @@ If your variable **does not** returns a hook, chances are you will still need to
 
 ### useState
 
-Arguably the most basic hook. Because of this, let's talk bring one more point one last time about the basics of TypeScript and React Hooks. There are two ways to type a hook function that returnS a value, assuming the hook is similar to `useState` where it accepts generic types:
+Arguably the most basic hook. Because of this, let's discuss one more point about the basics of TypeScript and React Hooks. There are two ways to type a hook function that returns a value, assuming the hook is similar to `useState` where it accepts generic types:
 
 1. By typing the returned value.
 2. By typing the hook.
