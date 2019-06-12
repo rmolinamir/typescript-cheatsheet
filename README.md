@@ -2749,7 +2749,7 @@ Finally, as you may have already been able to tell; `useState` is defined by the
 
 ### useEffect
 
-As stated above, the `useEffects` hook will execute whenever any changes are made to any variable(s) we subscribe to. Although are no typings in `useEffect`, it is worth nothing that TypeScript will function normally from within the scope of an `useEffect` hook, as regular.It is also worth noting that [there is quite a discussion going on about `useEffects` and how actions and dispatchers are handled, I recommend giving it a read, especially the linked comment](https://github.com/facebook/create-react-app/issues/6880#issuecomment-488158024).
+As stated above, the `useEffects` hook will execute whenever any changes are made to any variable(s) we subscribe to. Although are no typings in `useEffect`, it is worth nothing that TypeScript will function normally from within the scope of an `useEffect` hook, as regular. It is also worth noting that [there is quite a discussion going on about `useEffects` and how actions and dispatchers are handled, I recommend giving it a read, especially the linked comment](https://github.com/facebook/create-react-app/issues/6880#issuecomment-488158024).
 
 In any case, let's take a look at how `useEffect` is defined:
 
