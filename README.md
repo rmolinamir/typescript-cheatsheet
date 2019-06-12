@@ -2776,7 +2776,7 @@ It's worth nothing that `ReadonlyArray<T>` is actually defined by TypeScript, [a
 
 ### useContext
 
-Probably the most powerful hook when it comes to practicality alongside `useReducer`, `useContext` accepts a context returned from `React.createContext` and then returns the current value for that context. Having said that, you might already have guessed how `useContext` is defined, but let's give it a go anyways:
+Probably the most powerful hook when it comes to practicality alongside `useReducer`, `useContext` accepts a context returned from `React.createContext` and then returns the current value of that context. Having said that, you might already have guessed how `useContext` is defined, but let's give it a go anyways:
 
 ```tsx
   ...
