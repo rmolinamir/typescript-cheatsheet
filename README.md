@@ -2953,7 +2953,7 @@ Lets have a look at a more advanced example of `useContext` typing, that compose
 Perhaps the "primordial" hook, many hooks are based on how `useReducer` works, including some of the oficial React hooks such as `useState`. This, of course, thanks to Redux and its popularity. As you might know, `useReducer` is used mainly whenever you need to tackle at least one of the two following scenarios:
 
 1. You're handling complex state logic, meaning multiple state values for example.
-2. You're find yourself in need of multiple dispatchers for a single state.
+2. You find yourself in need of multiple action creators for a single state.
 
 Or both! Whatever may be the case, using TypeScript with `useReducer` is not too hard, but it's certainly a bit tedious because there are many variables involved, assuming that at least the basics of `useReducer` are known. The good news is that every reducer will follow the same steps whenever typing it. Before going into details about how to define types for the reducer, let's have a look at how the React team defined `useReducer`:
 
