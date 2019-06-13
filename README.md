@@ -3215,7 +3215,7 @@ Finally, let's plug everything up and see our reducer in action:
      * ----------REDUCER DISPATCHERS--------
      * -------------------------------------
      * `onChangeHandler` handles the input `onChange` event.
-     * Evaluates de validity of the value respective to how it's set up through `checkValidity`.
+     * Evaluates the validity of the value respective to how it's set up through `checkValidity`.
      * Executes the `props.onChange` callback if it exists after evaluating the value and saving it in the state.
      */
     const onChangeHandler = (event: React.ChangeEvent<HTMLInputElement>) => {
