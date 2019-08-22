@@ -71,7 +71,7 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
       6. [Omitting specific properties when extending an interface](#exclude-interface-properties)
       7. [Type checking for interfaces](#type-chkecking-interfaces)
       8. [Optional properties](#optional-properties)
-9. [Generics](#generators)
+9. [Generics](#generics)
       1. [Simple Generics](#simple-generics)
       2. [Better Generics](#better-generics)
       3. [Built-in Generics](#built-in-generics)
