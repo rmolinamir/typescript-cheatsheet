@@ -1761,10 +1761,10 @@ This way both the compiler **and** the IDE will know what type will be returned 
 
 ### Built-in Generics
 
-Some types though, have *built-in generics*. I've even used some as examples before without having touched yet on generics. Here is a very simple examples:
+Some types though, have *built-in generics*. I've even used some as examples before without having touched yet on generics. Here are some very simple examples:
 
 ```ts
-  const testResults: Array<number> = [1.94, 2,33];
+  const testResults: Array<number> = [1.94, 2.33];
   testResults.push(-2.99);
   // testResults.push('string'); // Not possible.
 
