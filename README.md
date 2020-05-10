@@ -1007,7 +1007,7 @@ This is commonly known as dynamic imports. The idea is to use the following patt
 > **This leverages the reference-elision optimization so that the module is only loaded when needed**. For this pattern to work, it’s important that the symbol defined via an import is only used in type positions (i.e. never in a position that would be emitted into the JavaScript).
 > **To maintain type safety, we can use the typeof keyword. The typeof keyword, when used in a type position, produces the type of a value, in this case the type of the module**.
 
-We may use the `declare` keyword to literally declare a function. For exmaple, to declare a require function we would use the following code:
+We may use the `declare` keyword to literally declare a function. For example, to declare a require function we would use the following code:
 
 ```ts
   declare function require(moduleName: string): any;
@@ -2205,7 +2205,7 @@ In this section though, I'll focus on how to use TypeScript while using `create-
 
 This will now also create the react app with all the configuration already set up and ready to go.
 
-[Here is an exmaple React.js app created by running the previous command.](https://github.com/rmolinamir/typescript-cheatsheet/tree/master/lib/react.js)
+[Here is an example React.js app created by running the previous command.](https://github.com/rmolinamir/typescript-cheatsheet/tree/master/lib/react.js)
 
 When using an interface to declare the PropTypes, by convention we must write a capital I when defining an interface. Let's see an example about how we can use PropTypes together with interfaces, enums, and how to apply them:
 
