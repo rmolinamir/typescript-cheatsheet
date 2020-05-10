@@ -8,111 +8,111 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
 
 # Table of contents
 
-1. [Introduction](#introduction)
-2. [Types](#types)
-      1. [Basic Assign Types](#basic-assign-types)
-          - [String](#string)
-          - [Number](#number)
-          - [Boolean](#boolean)
-          - [Array](#array)
-      2. [Tuples](#tuples)
-      3. [Any](#any)
-      4. [Enums](#enums)
-      5. [Functions](#functions)
-      6. [Argument Types](#argument-types)
-      7. [Function Types](#function-types)
-      8. [Void Function Type](#void-function-type)
-      9. [Objects](#objects)
-          - [Complex Objects](#complex-objects)
-          - [Optional Object Properties](#optional-object-properties)
-            - [Difference between optional properties and `undefined` or `null` properties of any type (`[variable]?` *vs.* `[type] | undefined | null`)](#difference-optional-properties-and-undefined-or-null)
-      10. [Alias](#alias)
-      11. [Union](#union)
-      12. [Intersection](#intersection)
-      13. [Check](#check)
-      14. [Never](#never)
-      15. [Nullable](#nullable)
-      16. [Type Assertions](#type-assertions)
-3. [ES6](#es6)
-      1. [Template Literals](#template-literals)
-      2. [Arrow Functions](#arrow-functions)
-      3. [Default Parameters](#default-parameters)
-      4. [Spread Operators](#spread-operators)
-      5. [Array Destructuring](#array-destructuring)
-      6. [Object Destructuring](#object-destructuring)
-4. [Classes](#classes)
-      1. [Private Members](#private-members)
-      2. [Class Inheritance](#class-inheritance)
-      3. [Getters & Setters](#getters-setters)
-      4. [Static Properties & Methods](#static-properties-methods)
-      5. [Abstract Classes](#abstract-classes)
-      6. [Private Constructors & Singletons **(MVP)**](#private-constructors-singletons)
-5. [Modules](#modules)
-      1. [Export](#export)
-      2. [Default Exports](#default-exports)
-      3. [Import](#import)
-      4. [Advanced Module Loading](#advanced-module-loading)
-6. [Namespaces](#namespaces)
-7. [Ambient Modules](#ambient-modules)
-      1. [Manually declaring a third party library](#manually-declaring-a-third-party-library)
-      2. [Using @types/[third-party-library] NPM packages](#types-npm-packages)
-      3. [Shorthand for Ambient Modules](#shorthand-for-ambient-modules)
-      4. [Wildcard Module Declarations](#wildcard-module-declarations)
-      5. [UMD modules](#umd-modules)
-8. [Interfaces](#interfaces)
-      1. [Optional Properties](#optional-properties)
-      2. [Index Signatures](#index-signatures)
-      3. [Implements Keyword](#implements-keyword)
-          - [References (React.createRef() or useRef API)](#reference-prop-types)
-          - [Implementing an `interface` to a `Class`](#implementing-interface-to-class)
-          - [Implementing an `interface` to a `function`](#implementing-interface-to-function)
-      4. [Extends Keyword (Interface Inheritance)](#extends-keyword-interface-inheritance)
-      5. [`Omit` type when extending an interface](#omit-type-interfaces)
-      6. [Omitting specific properties when extending an interface](#exclude-interface-properties)
-      7. [Type checking for interfaces](#type-chkecking-interfaces)
-      8. [Optional properties](#optional-properties)
-9. [Generics](#generics)
-      1. [Simple Generics](#simple-generics)
-      2. [Better Generics](#better-generics)
-      3. [Built-in Generics](#built-in-generics)
-      4. [Generic Types](#generic-types)
-      5. [Generic Class](#generic-class)
-10. [Decorators](#decorators)
-      1. [Prologue](#prologue)
-      2. [Introduction](#decorators-introduction)
-      3. [Basic Decorator](#basic-decorator)
-      4. [Factory](#factory)
-      5. [Advanced Decorator](#advanced-decorator)
-      6. [Method Decorator](#method-decorator)
-      7. [Property Decorator](#property-decorator)
-      8. [Parameter Decorator](#parameter-decorator)
-11. [Webpack Workflow (v^4.X)](#webpack-workflow)
-12. [TypeScript with React.js](#typescript-with-reactjs)
-      1. [TypeScript while using `create-react-app`](#typescript-while-using-create-react-app)
-      2. [Setting up general React prop types](#setting-up-prop-types)
-          - [References (React.createRef() or useRef API)](#reference-prop-types)
-          - [CSS Properties and Classes Prop Types](#css-prop-types)
-          - [React Children](#children-prop-types)
-          - [General Prop Types (e.g. `className`, `style`, HTML 5 props, etc.)](#general-prop-types)
-      3. [Setting up React References (React.createRef() or useRef API)](#setting-up-react-references)
-          - [TypeScript & useRef](#typescript-useref)
-          - [TypeScript & React.createRef](#typescript-reactcreateref)
-      4. [Setting up Event Handlers](#setting-up-event-references)
-      5. [TypeScript and React Hooks](#typescript-and-react-hooks)
-          - [useState](#usestate)
-          - [useEffect](#useeffect)
-          - [useContext](#usecontext)
-          - [useReducer](#usereducer)
-          - [useCallback](#usecallback)
-          - [useMemo](#usememo)
-          - [useRef](#useref)
-          - [useImperativeHandle](#useimperativehandle)
-          - [useLayoutEffect](#useLayoutEffect)
-          - [useDebugValue](#usedebugvalue)
-          - [Custom Hooks](#custom-hooks)
-13. [Feedback](#feedback)
-14. [Collaborators](#collaborators)
-15. [Contribute](#contribute)
+- [TypeScript Cheatsheet](#typescript-cheatsheet)
+- [Table of contents](#table-of-contents)
+  - [Introduction](#introduction)
+  - [Types](#types)
+    - [Basic Assign Types](#basic-assign-types)
+      - [String](#string)
+      - [Number](#number)
+      - [Boolean](#boolean)
+      - [Array](#array)
+    - [Tuples](#tuples)
+    - [Any](#any)
+    - [Enums](#enums)
+    - [Functions](#functions)
+    - [Argument Types](#argument-types)
+    - [Function Types](#function-types)
+    - [Void Function Type](#void-function-type)
+    - [Objects](#objects)
+      - [Complex Objects](#complex-objects)
+      - [Optional object properties](#optional-object-properties)
+        - [Difference between optional properties and `undefined` or `null` properties of any type (`[variable]?` and `[type] | undefined | null`)](#difference-between-optional-properties-and-undefined-or-null-properties-of-any-type-variable-and-type--undefined--null)
+    - [Alias](#alias)
+    - [Union](#union)
+    - [Intersection](#intersection)
+    - [Check](#check)
+    - [Never](#never)
+    - [Nullable](#nullable)
+    - [Type Assertions](#type-assertions)
+  - [ES6](#es6)
+    - [Template Literals](#template-literals)
+    - [Arrow Functions](#arrow-functions)
+    - [Default Parameters](#default-parameters)
+    - [Spread Operators](#spread-operators)
+    - [Array Destructuring](#array-destructuring)
+    - [Object Destructuring](#object-destructuring)
+  - [Classes](#classes)
+  - [Private Members](#private-members)
+  - [Class Inheritance](#class-inheritance)
+  - [Getters & Setters](#getters--setters)
+  - [Static Properties & Methods](#static-properties--methods)
+  - [Abstract Classes](#abstract-classes)
+  - [Private Constructors & Singletons](#private-constructors--singletons)
+  - [Modules](#modules)
+    - [Export](#export)
+    - [Default Exports](#default-exports)
+    - [Import](#import)
+    - [Advanced Module Loading](#advanced-module-loading)
+  - [Namespaces](#namespaces)
+  - [Ambient Modules](#ambient-modules)
+    - [Manually declaring a third party library](#manually-declaring-a-third-party-library)
+    - [Using @types/[third-party-library] NPM packages](#using-typesthird-party-library-npm-packages)
+    - [Shorthand for Ambient Modules](#shorthand-for-ambient-modules)
+    - [Wildcard module declarations](#wildcard-module-declarations)
+    - [UMD modules](#umd-modules)
+  - [Interfaces](#interfaces)
+    - [Optional Properties](#optional-properties)
+    - [Index Signatures (Dynamic Property Names)](#index-signatures-dynamic-property-names)
+    - [Implements Keyword](#implements-keyword)
+      - [*1.* Implementing an `interface` to a `Class`](#1-implementing-an-interface-to-a-class)
+      - [*2.* Implementing an `interface` to a `function`](#2-implementing-an-interface-to-a-function)
+    - [Extends Keyword (Interface Inheritance)](#extends-keyword-interface-inheritance)
+  - [`Omit` type when extending an interface](#omit-type-when-extending-an-interface)
+  - [Omitting specific properties when extending an interface](#omitting-specific-properties-when-extending-an-interface)
+  - [Type checking for interfaces](#type-checking-for-interfaces)
+  - [Generics](#generics)
+    - [Simple Generics](#simple-generics)
+    - [Better Generics](#better-generics)
+    - [Built-in Generics](#built-in-generics)
+    - [Generic Types](#generic-types)
+    - [Generic Class](#generic-class)
+  - [Decorators](#decorators)
+    - [Prologue](#prologue)
+    - [Decorators Introduction](#decorators-introduction)
+    - [Basic Decorator](#basic-decorator)
+    - [Factory](#factory)
+    - [Advanced Decorator](#advanced-decorator)
+    - [Method Decorator](#method-decorator)
+    - [Property Decorator](#property-decorator)
+    - [Parameter Decorator](#parameter-decorator)
+  - [Webpack Workflow (v^4.X)](#webpack-workflow-v4x)
+  - [TypeScript with React.js](#typescript-with-reactjs)
+    - [TypeScript while using `create-react-app`](#typescript-while-using-create-react-app)
+  - [Setting up general React prop types](#setting-up-general-react-prop-types)
+    - [References (`React.createRef()` or `useRef` API)](#references-reactcreateref-or-useref-api)
+    - [React Children](#react-children)
+    - [CSS Properties and Classes Prop Types](#css-properties-and-classes-prop-types)
+    - [General Prop Types (e.g. HTML 5 props, event listeners etc.)](#general-prop-types-eg-html-5-props-event-listeners-etc)
+  - [Setting up React References (React.createRef() or useRef API)](#setting-up-react-references-reactcreateref-or-useref-api)
+    - [TypeScript & useRef](#typescript--useref)
+    - [TypeScript & React.createRef](#typescript--reactcreateref)
+  - [Setting up Event Handlers](#setting-up-event-handlers)
+  - [TypeScript and React Hooks](#typescript-and-react-hooks)
+    - [useState](#usestate)
+    - [useEffect](#useeffect)
+    - [useContext](#usecontext)
+    - [useReducer](#usereducer)
+    - [useCallback](#usecallback)
+    - [useMemo](#usememo)
+    - [useRef](#useref)
+    - [useImperativeHandle](#useimperativehandle)
+    - [useLayoutEffect](#uselayouteffect)
+    - [useDebugValue](#usedebugvalue)
+    - [Custom Hooks](#custom-hooks)
+  - [Feedback](#feedback)
+  - [Collaborators](#collaborators)
+  - [Contribute](#contribute)
 
 ---
 
@@ -286,6 +286,7 @@ Just like the argument, the **return value** of a function may be assigned a typ
     // return myName; // Not possible because the function can't return anything due to the void assigned type (more on this below).
   }
 ```
+
 > Declaring variables of type `void` is not useful because you can only assign `undefined` or `null` to them:
 
 ```ts
@@ -323,7 +324,7 @@ In JavaScript, so as in TypeScript, Objects are comprised of key-value pairs. We
 
 #### Complex Objects
 
-As you may expect, the assigned types to the `object` key-value pairs can reach high levels of complexity, for example: 
+As you may expect, the assigned types to the `object` key-value pairs can reach high levels of complexity, for example:
 
 ```ts
   let complex: { data: number[], output: (all: boolean) => number[] } = {
@@ -359,7 +360,7 @@ In TypeScript, all newly declared **object properties** (including both **functi
 
 [⬆️ Back to top](#table-of-contents)<br>
 
-<a id="difference-optional-properties-and-undefined-or-null"></a>
+<a id="difference-between-optional-properties-and-undefined-or-null-properties-of-any-type-variable-and-type--undefined--null"></a>
 
 ##### Difference between optional properties and `undefined` or `null` properties of any type (`[variable]?` and `[type] | undefined | null`)
 
@@ -647,7 +648,7 @@ TypeScript offers `public`, `private`, and protected modifiers to every class me
     private setType = (type: string) => {
       this.type = type;
       console.log(this.type);
-    } 
+    }
   }
 
   const person = new Person('Francisco', 'rmolinamir', 'example@email.com');
@@ -694,15 +695,15 @@ When a member is marked `private`, it cannot be accessed from outside of its con
   console.log(person); // Prints:
   /**
    * Person
-   * 
-   * age: 23 
-   * email: "email" 
-   * name: "Rob" 
-   * printAge: ƒ () 
-   * setType: ƒ (type) 
-   * type: "Cool guy" 
+   *
+   * age: 23
+   * email: "email"
+   * name: "Rob"
+   * printAge: ƒ ()
+   * setType: ƒ (type)
+   * type: "Cool guy"
    * userName: "rm"
-   * 
+   *
    */
 ```
 
@@ -892,7 +893,7 @@ Afterwards, it is possible to call any of the other public methods of the class.
 
 > Modules are executed within their own scope, not in the global scope; this means that variables, functions, classes, etc. declared in a module are not visible outside the module unless they are explicitly exported using one of the export forms. Conversely, to consume a variable, function, class, interface, etc. exported from a different module, it has to be imported using one of the import forms.
 
-The module code generation may be specified in the `tsconfig.json` file. **The compiler will generate appropriate code for Node.js (CommonJS), requirejs (AMD), UMD, SystemJS, or ECMAScript 2015 native modules (ES6) module-loading systems** depending on what the `tsconfig.json` `module` option is set on. For example, the React.js `tsconfig.json` file generated when using `create-react-app` module code generation option is `esnext`, targeted to `es5`. 
+The module code generation may be specified in the `tsconfig.json` file. **The compiler will generate appropriate code for Node.js (CommonJS), requirejs (AMD), UMD, SystemJS, or ECMAScript 2015 native modules (ES6) module-loading systems** depending on what the `tsconfig.json` `module` option is set on. For example, the React.js `tsconfig.json` file generated when using `create-react-app` module code generation option is `esnext`, targeted to `es5`.
 
 > In TypeScript, any file containing a top-level import or export is considered a module. Conversely, a file without any top-level import or export declarations is treated as a script whose contents are available in the global scope (and therefore to modules as well).
 
@@ -971,7 +972,7 @@ The `default` exports are really handy. For instance, a library like React.js mi
 
 ### Import
 
-> Importing is just about as easy as exporting from a module. 
+> Importing is just about as easy as exporting from a module.
 
 Importing an exported declaration is done through using the `import` keyword. For example, considering the `PI`, `calculateCircumference`, and `calculateRectangle` export examples shown above, this is how we would import them into our `app.ts` file with the following folder structure:
 
@@ -1002,7 +1003,7 @@ TypeScript v^3.0
 
 Sometimes we might be in a situation where we only want to load certain parts of our application dynamically. This may be to reduce the initial load time or to improve performance.
 
-This is commonly known as dynamic imports. The idea is to use the following pattern: `import id = require('...')` which will give us access to the types exposed by the module thanks to the compiler. The module will be loaded dynamically, which means it can be preceded by something like an `if` statement. 
+This is commonly known as dynamic imports. The idea is to use the following pattern: `import id = require('...')` which will give us access to the types exposed by the module thanks to the compiler. The module will be loaded dynamically, which means it can be preceded by something like an `if` statement.
 
 > **This leverages the reference-elision optimization so that the module is only loaded when needed**. For this pattern to work, it’s important that the symbol defined via an import is only used in type positions (i.e. never in a position that would be emitted into the JavaScript).
 > **To maintain type safety, we can use the typeof keyword. The typeof keyword, when used in a type position, produces the type of a value, in this case the type of the module**.
@@ -1250,7 +1251,7 @@ However, one disadvantage of this alternative is that the IDE will not have acce
 
 ### Using @types/[third-party-library] NPM packages
 
-The problem with the first alternative, is that by declaring jQuery's `$` as type `any` (`declare var $: any;`), we are basically telling the compiler to *assume* that it will have access to jQuery in runtime. But that's not practical. 
+The problem with the first alternative, is that by declaring jQuery's `$` as type `any` (`declare var $: any;`), we are basically telling the compiler to *assume* that it will have access to jQuery in runtime. But that's not practical.
 
 To avoid this we can use `@types` packages. These packages basically contain type definitions for their respective JS libraries counterparts. For example, using [@types/jquery](https://www.npmjs.com/package/@types/jquery) or [`@types/react`](https://www.npmjs.com/package/@types/react) will enable the programmer to use their respective types all over the application without having to declare them. This is because both of these libraries have `.d.ts` files includes and the compiler will pick them up inside the `node_modules` library.
 
@@ -1381,7 +1382,7 @@ You might think this would make interfaces not scallable because of very restric
   }
 
   // Not possible because the firstName key-value pair is missing.
-  // const wrong: SimplePerson = { lastName: 'Molina', age: 24 }; 
+  // const wrong: SimplePerson = { lastName: 'Molina', age: 24 };
   const right: SimplePerson = { firstName: 'Robert', age: 24 };
 ```
 
@@ -1745,7 +1746,7 @@ While the example above is technically a generic function, let's now improve it 
 
 > We’ve now added a type variable `T` to the function. This `T` allows us to capture the type the user provides (e.g. `number`), so that we can use that information later. Here, we use `T` again as the return type.
 
-By using the angle brackets right beside `betterEcho`, it's a way of saying to the compiler and the IDE the following: *"hey, `betterEcho` must return a value **type** *equal* to the **type** of the `data` argument"*. Here is an example of using `betterEcho` and how the compiler would behave:
+By using the angle brackets right beside `betterEcho`, it's a way of saying to the compiler and the IDE the following: *"hey, `betterEcho` must return a value **type** equal to the **type** of the `data` argument"*. Here is an example of using `betterEcho` and how the compiler would behave:
 
 ```ts
   // Now I get types in the IDE, the compiler also knows what type is returned from betterEcho.
@@ -1903,7 +1904,7 @@ tsc --target ES5 --experimentalDecorators
 
 <a id="decorators-introduction"></a>
 
-### Introduction
+### Decorators Introduction
 
 > A Decorator is a special kind of declaration that can be attached to a class declaration, method, accessor, property, or parameter. Decorators use the form `@expression`, where **`expression`** must evaluate to a function that will be called at runtime with information about the decorated declaration.
 
@@ -2226,7 +2227,7 @@ When using an interface to declare the PropTypes, by convention we must write a 
       return (
         <div>
           <p>
-            <CounterOutput 
+            <CounterOutput
               counter={this.state.counterValue}
               onClick={this.counterHandler} />
           </p>
@@ -2793,7 +2794,7 @@ Probably the most powerful hook when it comes to practicality alongside `useRedu
   function useContext<T>(context: Context<T>): T;
 ```
 
-Generics all over the place! They provide us with a way to build any number of reusable, consistent, and well defined API. 
+Generics all over the place! They provide us with a way to build any number of reusable, consistent, and well defined API.
 
 Here is a basic example of `useContext`, which provides CSS styling to buttons that are within the context:
 
@@ -2939,9 +2940,9 @@ Lets have a look at a more advanced example of `useContext` typing, that compose
         ...props
       }
 
-      return ( 
+      return (
         <WrappedComponent {...newProps} />
-      )
+      );
     }
   }
 ```
@@ -3108,7 +3109,7 @@ Let's now define our `initialState` variable, and our `useReducer` hook inside o
       placeholder: props.placeholder,
       validation: {
         required: props.required || false,
-        email: props.type === 'email' && true, 
+        email: props.type === 'email' && true,
         ...props.validation
       },
       required: props.required || false,
@@ -3116,7 +3117,6 @@ Let's now define our `initialState` variable, and our `useReducer` hook inside o
       valid: props.valid || false,
       touched: props.touched || false
     }
-    
     const [state, dispatch] = React.useReducer<React.Reducer<IInputState, IReducerAction>>(reducer, initialState)
   }
 ```
@@ -3858,9 +3858,12 @@ And thank you very much for taking the time to do so 💖
 
 ## Collaborators
 
-This is a (currently not so big) list of all the awesome collaborators (present or past) of the TypeScript Cheatsheet:
+This is a list of all the awesome collaborators (present or past) and contributors of the TypeScript Cheatsheet:
 
-- [*evdama*](https://github.com/evdama) 🥇
+- [evdama](https://github.com/evdama)
+- [KevinKelbie](https://www.reddit.com/user/KevinKelbie)
+- [Ical89](https://www.reddit.com/user/Ical89)
+- [disco0](https://www.reddit.com/user/disco0)
 
 Make sure to buy them a beer if you ever meet one of them 😊
 
@@ -3870,14 +3873,9 @@ Make sure to buy them a beer if you ever meet one of them 😊
 
 ## Contribute
 
-Contributions are always welcome! Just like before, submit a PR and/or let me know at if you realize I'm taking too long to reply:
+Contributions are always welcome! Just like before, all you would have to do is submit a PR and I will be reviewing it shortly. If you have any doubts you can let me know at:
 
 - [u/rmolinamir](https://www.reddit.com/user/rmolinamir)
 - [rmolinamir@gmail.com](mailto:rmolinamir@gmail.com)
-
-Here's a small list of awesome people that have contributed in some way or another, thank you guys!
-
-- [KevinKelbie](https://www.reddit.com/user/KevinKelbie)
-- [Ical89](https://www.reddit.com/user/Ical89)
 
 [⬆️ Back to top](#table-of-contents)<br>
