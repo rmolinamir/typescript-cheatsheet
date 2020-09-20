@@ -420,7 +420,7 @@ Variables are not restricted to only one assigned type. This is where union type
 
 Intersection types are similar to union types (and similar to the `extend` keyword pattern, which is explained further down), but arguably less common (yet, at least equally useful). Before we get into what an intersection type is, I must mention that in the [TypeScript official documentation about the intersection types](https://www.typescriptlang.org/docs/handbook/advanced-types.html), they are showcased first and *before* the union types, however in this guide I will mention them *after* the union types because they have a bit of a more abstract definition.
 
-Since it's a rather abstract concept, to give you an idea of what an intersection type is, think of the famous `React.js` package, `react-redux`, and its [`compose` function](https://redux.js.org/api/compose). A [brief look of the code snippet](https://github.com/reduxjs/redux/blob/master/src/compose.js) will show us how all of the `function` arguments of `compose` are *mixed* into one single `function`. This is essentially what the the intersection types do, they *mix* an N number of types to create a new one, so long as they are compatible.
+Since it's a rather abstract concept, to give you an idea of what an intersection type is, think of the famous `React.js` package, `react-redux`, and its [`compose` function](https://redux.js.org/api/compose). A [brief look of the code snippet](https://github.com/reduxjs/redux/blob/c43fc3a7c7048c0dba614bc6fbea1b22740d5176/src/compose.ts) will show us how all of the arguments of the `compose` function are *mixed* into one single `function`. This is essentially what the the intersection types do, they *mix* an N number of types to create a new one, so long as they are compatible.
 
 In TypeScript, an intersection type is simply a mix (more commonly referred to as a ***mixin***) between two or more types.
 
@@ -3864,6 +3864,7 @@ This is a list of all the awesome collaborators (present or past) and contributo
 - [KevinKelbie](https://www.reddit.com/user/KevinKelbie)
 - [Ical89](https://www.reddit.com/user/Ical89)
 - [disco0](https://www.reddit.com/user/disco0)
+- [kberg](https://www.reddit.com/user/kberg)
 
 Make sure to buy them a beer if you ever meet one of them 😊
 
