@@ -27,7 +27,6 @@ A set of TypeScript related notes used for quick reference. The cheatsheet conta
     - [Objects](#objects)
       - [Complex Objects](#complex-objects)
       - [Optional object properties](#optional-object-properties)
-        - [Difference between optional properties and `undefined` or `null` properties of any type (`[variable]?` and `[type] | undefined | null`)](#difference-between-optional-properties-and-undefined-or-null-properties-of-any-type-variable-and-type--undefined--null)
     - [Alias](#alias)
     - [Union](#union)
     - [Intersection](#intersection)
@@ -357,35 +356,6 @@ In TypeScript, all newly declared **object properties** (including both **functi
   //   age: 24
   // };
 ```
-
-[⬆️ Back to top](#table-of-contents)<br>
-
-<a id="difference-between-optional-properties-and-undefined-or-null-properties-of-any-type-variable-and-type--undefined--null"></a>
-
-##### Difference between optional properties and `undefined` or `null` properties of any type (`[variable]?` and `[type] | undefined | null`)
-
-**Note** that you *might* think that the type of the `age` property becomes `number | undefined | null`, but that is absolutely not the case and it's quite the contrary. The property `age` will still be of type `number` and not accept any other unless explicitly typed. This is a bit of a grey area because the compiler will run in the case where `age` may not be an optional property, while still defined as `undefined` or `null`.
-
-Here's an example that leads to an error on runtime:
-
-```ts
-  const nullCompiles: { name: string, age: number } = {
-    name: 'Robert',
-    age: null
-  };
-
-  const undefinedCompiles: { name: string, age: number } = {
-    name: 'Robert',
-    age: undefined
-  };
-
-  console.log('nullCompiles', nullCompiles);
-  console.log('undefinedCompiles', undefinedCompiles);
-
-  const undefinedAge = undefinedCompiles.age.toString(); // Will generate a crash
-```
-
-I presume that the reason the code of the example above is compiled successfully is because the compiler assumes age can only be of type number, so be careful if you ever run into strange bugs like these when using optional properties. I would recommend to be as explicit as possible when using TypeScript!
 
 [⬆️ Back to top](#table-of-contents)<br>
 
@@ -3628,7 +3598,9 @@ Now let's use it in a parent component, and access `ref`:
   }
 ```
 
-Notice how the `AutofocusedInput` component focuses on functionality with almost no declarations. The `focus` propety of the `ImperativeInput` component's DOM node is not directly executed inside `AutofocusedInput`, instead we are executing the exposed method declared as `exposedFocusMethod`, which then executes `focus`. This is why the React team named this hook as `useImperativeHandle`. In computer science, imperative programming [focuses on what the program should accomplish without specifying how the program should achieve the result](https://en.wikipedia.org/wiki/Imperative_programming).
+Notice how the `AutofocusedInput` component focuses on functionality with almost no declarations. The `focus` propety of the `ImperativeInput` component's DOM node is not directly executed inside `AutofocusedInput`, instead we are executing the exposed method declared as `exposedFocusMethod`, which then executes `focus`. This is why the React team named this hook as `useImperativeHandle`.
+
+> In computer science, imperative programming [is a programming paradigm that uses statements that change a program's state](https://en.wikipedia.org/wiki/Imperative_programming).
 
 [⬆️ Back to top](#table-of-contents)<br>
 
@@ -3865,6 +3837,7 @@ This is a list of all the awesome collaborators (present or past) and contributo
 - [Ical89](https://www.reddit.com/user/Ical89)
 - [disco0](https://www.reddit.com/user/disco0)
 - [kberg](https://www.reddit.com/user/kberg)
+- [Svish](https://www.reddit.com/user/Svish)
 
 Make sure to buy them a beer if you ever meet one of them 😊
 
