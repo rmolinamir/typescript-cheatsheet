@@ -3838,6 +3838,7 @@ This is a list of all the awesome collaborators (present or past) and contributo
 - [disco0](https://www.reddit.com/user/disco0)
 - [kberg](https://www.reddit.com/user/kberg)
 - [Svish](https://www.reddit.com/user/Svish)
+- [MaxmaxmaximusAWS](https://www.reddit.com/user/MaxmaxmaximusAWS)
 
 Make sure to buy them a beer if you ever meet one of them 😊
 
