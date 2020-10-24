@@ -446,7 +446,7 @@ console.log(
 
 ### Check
 
-Programmatically checking for types work eactly as it works in JavaScript:
+Programmatically checking for types work exactly as it works in JavaScript:
 
 ```ts
   let finalValue = 'A string';
