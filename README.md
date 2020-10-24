@@ -3834,11 +3834,12 @@ This is a list of all the awesome collaborators (present or past) and contributo
 
 - [evdama](https://github.com/evdama)
 - [KevinKelbie](https://www.reddit.com/user/KevinKelbie)
-- [Ical89](https://www.reddit.com/user/Ical89)
-- [disco0](https://www.reddit.com/user/disco0)
-- [kberg](https://www.reddit.com/user/kberg)
-- [Svish](https://www.reddit.com/user/Svish)
-- [MaxmaxmaximusAWS](https://www.reddit.com/user/MaxmaxmaximusAWS)
+- [Ical89](https://github.com/Ical89)
+- [disco0](https://github.com/disco0)
+- [kberg](https://github.com/kberg)
+- [Svish](https://github.com/Svish)
+- [MaxmaxmaximusAWS](https://github.com/MaxmaxmaximusAWS)
+- [nfedyashev](https://github.com/nfedyashev)
 
 Make sure to buy them a beer if you ever meet one of them 😊
 
