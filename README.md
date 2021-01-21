@@ -3840,6 +3840,7 @@ This is a list of all the awesome collaborators (present or past) and contributo
 - [Svish](https://github.com/Svish)
 - [MaxmaxmaximusAWS](https://github.com/MaxmaxmaximusAWS)
 - [nfedyashev](https://github.com/nfedyashev)
+- [jakangah](https://github.com/jakangah)
 
 Make sure to buy them a beer if you ever meet one of them 😊
 
