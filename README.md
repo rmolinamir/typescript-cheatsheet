@@ -750,14 +750,14 @@ Static properties and methods are class members that can be accessed from an out
 ```ts
   class Helpers {
     static PI: number = 3.14;
-    static calcCircunferance(diameter: number): number {
+    static calcCircumference(diameter: number): number {
       return this.PI * diameter;
     }
   }
 
   console.log(Helpers.PI); // Prints: 3.14
   console.log(2 * Helpers.PI); // Prints: 6.28
-  console.log(Helpers.calcCircunferance(10)); // Prints: 31.42
+  console.log(Helpers.calcCircumference(10)); // Prints: 31.42
 ```
 
 [⬆️ Back to top](#table-of-contents)<br>
