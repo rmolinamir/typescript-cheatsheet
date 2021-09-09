@@ -848,7 +848,7 @@ If it already exists, we can always return the previously created instance, here
 
   // const wrongWay = new OnlyOne('The Only One') // Not Possible
   const rightWay = OnlyOne.getInstance();
-  const anotherWay = OnlyOne.getInstace(); // Works too.
+  const anotherWay = OnlyOne.getInstance(); // Works too.
 ```
 
 In the above example, the variables `rightWay` and `anotherWay` would be pointers (think `C++`) to the same instance of `OnlyOne`. As you can see, to initiate `OnlyOne` we have to call `getInstance` instead of running the constructor from an outter scope of the `OnlyOne` class.
