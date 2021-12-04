@@ -3842,6 +3842,7 @@ This is a list of all the awesome collaborators (present or past) and contributo
 - [nfedyashev](https://github.com/nfedyashev)
 - [jakangah](https://github.com/jakangah)
 - [tobiasbueschel](https://github.com/tobiasbueschel)
+- [ValentinTapiaTorti](https://github.com/ValentinTapiaTorti)
 
 Make sure to buy them a beer if you ever meet one of them 😊
 
