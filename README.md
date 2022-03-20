@@ -2606,7 +2606,7 @@ Let's create two event handlers, a `MouseEvent` handler that will prevent the de
 
 ## TypeScript and React Hooks
 
-In this section, we wil cover how to use the React Hooks implemented in v16.8 in TypeScript. It will be assumed that the reader has at least basic knowledge of Hooks and generics. Generics are **heavily** used alongside Hooks, mostly to set the type(s) of the variables that will be returned from the hooks, e.g., a state variable returned from `useState`. In general, it is only necessary to type a hook if it returns a value, here' an example with `useState`:
+In this section, we will cover how to use the React Hooks implemented in v16.8 in TypeScript. It will be assumed that the reader has at least basic knowledge of Hooks and generics. Generics are **heavily** used alongside Hooks, mostly to set the type(s) of the variables that will be returned from the hooks, e.g., a state variable returned from `useState`. In general, it is only necessary to type a hook if it returns a value, here' an example with `useState`:
 
 Given `useState` , we can specify the type of the returning value by declaring it in TypeScript as follows:
 
