@@ -3843,6 +3843,7 @@ This is a list of all the awesome collaborators (present or past) and contributo
 - [jakangah](https://github.com/jakangah)
 - [tobiasbueschel](https://github.com/tobiasbueschel)
 - [ValentinTapiaTorti](https://github.com/ValentinTapiaTorti)
+- [thatseanren](https://github.com/thatseanren)
 
 Make sure to buy them a beer if you ever meet one of them 😊
 
