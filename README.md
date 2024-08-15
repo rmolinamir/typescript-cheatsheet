@@ -630,7 +630,7 @@ TypeScript offers `public`, `private`, and protected modifiers to every class me
 
 ## Private Members
 
-When a member is marked `private`, it cannot be accessed from outside of its containing class. **However, should a class `X` inherit properties from `Person`, class `A` will be able to access all private properties from `Person` (e.g. `type and setType`) due to being inside (or having access to) the protected scope**. More on what class inheritance is all about just below, but here's an example;
+When a class inherits from another class, private members of the parent class are not accessible directly in the child class. Instead, interaction with private members can only be done through public or protected methods of the parent class.
 
 ```ts
   class Type {
