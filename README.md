@@ -1418,7 +1418,7 @@ Here are two more advanced examples, we can use an `interface` to define the sub
   }
 
   const myPerson = new Person('Robert', 'Molina');
-  greet(myPerson); // Prints: "Hi, I am Robert Moina"
+  myPerson.greet('Molina'); // Prints: "Hi, I am Robert Moina"
 ```
 
 > Interfaces describe the **`public` side of the class**, rather than both the `public` and `private` side. This prohibits you from using them to check that a class also has particular types for the private side of the class instance.
